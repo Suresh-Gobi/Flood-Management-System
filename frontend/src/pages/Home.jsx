@@ -1,7 +1,12 @@
 import React from 'react'
+import Hero from './home/hero';
+import Why from './home/why';
 
-export default function Home() {
+export default function HomePage() {
   return (
-    <h1 style={{paddingTop: "100px"}}>Home</h1>
+    <div>
+      <Hero/>
+      <Why/>
+    </div>
   )
 }

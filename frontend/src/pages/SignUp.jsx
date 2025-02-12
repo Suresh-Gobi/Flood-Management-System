@@ -20,7 +20,7 @@ const SignUp = () => {
     try {
       setLoading(true);
 
-      const response = await axios.post("api/auth/signup", values);
+      const response = await axios.post("api/signup", values);
 
       console.log("Success:", response.data);
 
@@ -30,11 +30,6 @@ const SignUp = () => {
         "You have successfully signed up!"
       );
 
-      openNotification(
-        "info",
-        "Email Verification",
-        "Email verification link has been sent to your email."
-      );
     } catch (error) {
       console.error("Failed:", error.response.data);
 

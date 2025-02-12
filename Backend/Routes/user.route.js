@@ -9,4 +9,7 @@ router.post('/signup', userController.signup);
 router.post('/signin', userController.signin);
 
 
+router.post('/reqotp', userController.sendPasswordResetOTP);
+
+
 module.exports = router;

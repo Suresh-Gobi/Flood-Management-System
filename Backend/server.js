@@ -7,6 +7,10 @@ require("dotenv").config();
 
 // Initialize Express app
 const app = express();
+
+// Middleware to parse JSON
+app.use(express.json());
+
 app.use(cors({ origin: "*" }));
 
 // Connect to MongoDB

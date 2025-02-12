@@ -4,6 +4,6 @@ const userController = require('../Controllers/user.controller');
 const router = express.Router();
 
 // Route to get all users
-// router.get('/', userController.getAllUsers);
+router.post('/signup', userController.signup);
 
 module.exports = router;

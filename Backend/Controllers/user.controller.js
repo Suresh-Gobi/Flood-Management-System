@@ -98,18 +98,22 @@ exports.sendPasswordResetOTP = async (req, res) => {
             return res.status(400).json({ msg: "User does not exist" });
         }
 
-        const otp = crypto.randomInt(100000, 999999);
+        // Generate OTP
+        const otp = Math.floor(100000 + Math.random() * 900000); // Generates a 6-digit OTP
+
+        // Save OTP to database
         user.resetPasswordOTP = otp;
-        user.resetPasswordExpires = Date.now() + 3600000;
+        user.resetPasswordExpires = Date.now() + 3600000; // 1 hour validity
         await user.save();
 
+        // Send OTP via email
         const emailSent = await sendVerificationEmail(user.email, otp);
 
         if (!emailSent) {
             return res.status(500).json({ msg: "Failed to send OTP email" });
         }
 
-        res.json({ msg: "OTP sent to email" });
+        res.json({ msg: "OTP sent to email successfully" });
     } catch (err) {
         console.error(err.message);
         res.status(500).send("Server error");
@@ -127,9 +131,13 @@ exports.resetPassword = async (req, res) => {
             return res.status(400).json({ msg: 'User does not exist' });
         }
 
-        // Check if OTP is valid and not expired
-        if (user.resetPasswordOTP !== otp || user.resetPasswordExpires < Date.now()) {
+        // Ensure OTP is valid and not expired
+        if (!user.resetPasswordOTP || !user.resetPasswordExpires || user.resetPasswordExpires < Date.now()) {
             return res.status(400).json({ msg: 'Invalid or expired OTP' });
+        }
+
+        if (user.resetPasswordOTP.toString() !== otp.toString()) {
+            return res.status(400).json({ msg: 'Incorrect OTP' });
         }
 
         // Hash new password
@@ -140,12 +148,12 @@ exports.resetPassword = async (req, res) => {
         user.resetPasswordOTP = undefined;
         user.resetPasswordExpires = undefined;
 
-        // Save new password to database
+        // Save updated user data
         await user.save();
 
         res.json({ msg: 'Password reset successful' });
     } catch (err) {
-        console.error(err.message);
+        console.error('Error resetting password:', err.message);
         res.status(500).send('Server error');
     }
 };

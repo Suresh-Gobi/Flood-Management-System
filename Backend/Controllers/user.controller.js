@@ -93,31 +93,29 @@ exports.sendPasswordResetOTP = async (req, res) => {
     const { email } = req.body;
 
     try {
-        // Check if user exists
         let user = await User.findOne({ email });
         if (!user) {
-            return res.status(400).json({ msg: 'User does not exist' });
+            return res.status(400).json({ msg: "User does not exist" });
         }
 
-        // Generate OTP
         const otp = crypto.randomInt(100000, 999999);
-
-        // Save OTP to user document with expiration time
         user.resetPasswordOTP = otp;
-        user.resetPasswordExpires = Date.now() + 3600000; // 1 hour
+        user.resetPasswordExpires = Date.now() + 3600000;
         await user.save();
 
-        // Send OTP via email
-        const subject = 'Password Reset OTP';
-        const text = `Your OTP for password reset is ${otp}`;
-        await sendVerificationEmail(user.email, subject, text);
+        const emailSent = await sendVerificationEmail(user.email, otp);
 
-        res.json({ msg: 'OTP sent to email' });
+        if (!emailSent) {
+            return res.status(500).json({ msg: "Failed to send OTP email" });
+        }
+
+        res.json({ msg: "OTP sent to email" });
     } catch (err) {
         console.error(err.message);
-        res.status(500).send('Server error');
+        res.status(500).send("Server error");
     }
 };
+
 
 exports.resetPassword = async (req, res) => {
     const { email, otp, newPassword } = req.body;

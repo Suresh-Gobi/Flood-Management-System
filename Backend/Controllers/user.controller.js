@@ -49,11 +49,11 @@ exports.signup = async (req, res) => {
 };
 
 exports.signin = async (req, res) => {
-    const { email, password } = req.body;
+    const { username, password } = req.body;
 
     try {
         // Check if user exists
-        let user = await User.findOne({ email });
+        let user = await User.findOne({ username });
         if (!user) {
             return res.status(400).json({ msg: 'Invalid Credentials' });
         }

@@ -69,7 +69,7 @@ const Profile = () => {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-100">
+    
       <Card
         title={<Title level={2} className="text-center text-blue-600">User Profile</Title>}
         extra={
@@ -110,7 +110,7 @@ const Profile = () => {
           <Text type="secondary" className="flex justify-center">No user data found.</Text>
         )}
       </Card>
-    </div>
+
   );
 };
 

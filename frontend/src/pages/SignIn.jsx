@@ -24,34 +24,29 @@ const SignIn = () => {
 
       console.log("Success:", response.data);
 
+      // Save token to localStorage
+      localStorage.setItem("token", response.data.token);
+
       openNotification(
         "success",
         "Signin Successful",
         "You have successfully signed in!"
       );
 
-      // Navigate to the dashboard or home page after successful signin
+      // Redirect to dashboard
       navigate("/dashboard");
 
     } catch (error) {
-      console.error("Failed:", error.response.data);
+      console.error("Failed:", error.response?.data);
 
-      if (error.response && error.response.data && error.response.data.error) {
-        openNotification("error", "Signin Failed", error.response.data.error);
-      } else {
-        openNotification(
-          "error",
-          "Signin Failed",
-          "An unexpected error occurred."
-        );
-      }
+      openNotification(
+        "error",
+        "Signin Failed",
+        error.response?.data?.error || "An unexpected error occurred."
+      );
     } finally {
       setLoading(false);
     }
-  };
-
-  const onFinishFailed = (errorInfo) => {
-    console.log("Failed:", errorInfo);
   };
 
   return (
@@ -60,68 +55,35 @@ const SignIn = () => {
         title={<h1 className="text-2xl">Signin</h1>}
         className="w-full max-w-xl p-2 rounded-lg shadow-md"
       >
-        <Form
-          name="basic"
-          labelCol={{
-            span: 8,
-          }}
-          wrapperCol={{
-            span: 16,
-          }}
-          style={{
-            maxWidth: 600,
-          }}
-          initialValues={{
-            remember: true,
-          }}
-          onFinish={onFinish}
-          onFinishFailed={onFinishFailed}
-          autoComplete="off"
-        >
+        <Form name="signinForm" layout="vertical" onFinish={onFinish} autoComplete="off">
           <Form.Item
-            label="Email"
-            name="email"
-            rules={[
-              {
-                required: true,
-                message: "Please input your email!",
-              },
-            ]}
-            labelAlign="left"
+            label="Username"
+            name="username"
+            rules={[{ required: true, message: "Please input your username!" }]}
           >
-            <Input className="w-full" />
+            <Input />
           </Form.Item>
 
           <Form.Item
             label="Password"
             name="password"
-            rules={[
-              {
-                required: true,
-                message: "Please input your password!",
-              },
-            ]}
-            labelAlign="left"
+            rules={[{ required: true, message: "Please input your password!" }]}
           >
-            <Input.Password className="w-full" />
+            <Input.Password />
           </Form.Item>
 
-          <Form.Item
-            wrapperCol={{
-              offset: 8,
-              span: 16,
-            }}
-          >
+          <Form.Item>
             <Button
               type="primary"
               htmlType="submit"
-              className="w-40 bg-blue-500 hover:bg-blue-700 items-center justify-center flex"
+              className="w-full bg-blue-500 hover:bg-blue-700"
               loading={loading}
             >
-              {loading ? "Loading..." : "Signin"}
+              {loading ? "Signing in..." : "Signin"}
             </Button>
           </Form.Item>
         </Form>
+
         <hr />
         <Text className="flex items-center justify-center pt-5">
           Don't have an account? <a href="/signup">Sign-up</a>

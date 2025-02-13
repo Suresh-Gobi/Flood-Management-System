@@ -127,7 +127,7 @@ const SignIn = () => {
           Don't have an account? <a href="/signup">Sign-up</a>
         </Text>
         <Text className="flex items-center justify-center pt-2">
-          <a href="/forgot-password">Forgot Password?</a>
+          <a href="/req-otp">Forgot Password?</a>
         </Text>
       </Card>
     </div>

@@ -30,6 +30,8 @@ const SignUp = () => {
         "You have successfully signed up!"
       );
 
+      navigate('/sign-in');
+
     } catch (error) {
       console.error("Failed:", error.response.data);
 

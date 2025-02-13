@@ -45,7 +45,7 @@ const UserSchema = new Schema({
   },
   role: {
     type: String,
-    defaultValue: "admin",
+    defaultValue: "user",
   },
   resetPasswordOTP: {
     type: String,

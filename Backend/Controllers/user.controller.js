@@ -151,9 +151,25 @@ exports.resetPassword = async (req, res) => {
     }
 };
 
+exports.getUserDetails = async (req, res) => {
+    const userId = req.user.id;
+
+    try {
+        let user = await User.findById(userId).select('-password -resetPasswordOTP -resetPasswordExpires');
+        if (!user) {
+            return res.status(404).json({ msg: "User not found" });
+        }
+
+        res.json(user);
+    } catch (err) {
+        console.error("Error fetching user details:", err.message);
+        res.status(500).send("Server error");
+    }
+};
+
 exports.updateUserDetails = async (req, res) => {
     const { first_name, last_name, phone_number, date_of_birth, address } = req.body;
-    const userId = req.user.id; // Extracted from authMiddleware
+    const userId = req.user.id;
 
     try {
         let user = await User.findById(userId);
@@ -168,7 +184,7 @@ exports.updateUserDetails = async (req, res) => {
         user.date_of_birth = date_of_birth || user.date_of_birth;
         user.address = address || user.address;
 
-        await user.save(); // Save updated data
+        await user.save();
 
         res.json({ msg: "User details updated successfully", user });
     } catch (err) {

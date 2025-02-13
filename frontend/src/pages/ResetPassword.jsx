@@ -69,7 +69,7 @@ export default function ResetPassword() {
           </Form.Item>
         </Form>
         <Text className="flex items-center justify-center">
-          <a href="/signin">Back to Sign-in</a>
+          <a href="/sign-in">Back to Sign-in</a>
         </Text>
       </Card>
     </div>

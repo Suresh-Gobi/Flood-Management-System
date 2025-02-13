@@ -10,6 +10,7 @@ import About from "./pages/About";
 import Profile from "./pages/Profile";
 import Header from "./components/Header";
 import SignupValidation from "./auth/SignupValidation";
+import ResetPassword from "./pages/ResetPassword";
 
 export default function App() {
   return (
@@ -22,6 +23,7 @@ export default function App() {
         <Route path="/about" element={<About />} />
         <Route path="/profile" element={<Profile />} />
         <Route path="/req-otp" element={<ReqOTP />} />
+        <Route path="/reset-password" element={<ResetPassword />} />
         <Route path="/sign-up/verify/:otp" element={<SignupValidation />} />
       </Routes>
     </BrowserRouter>

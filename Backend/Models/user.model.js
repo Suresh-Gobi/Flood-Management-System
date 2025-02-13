@@ -24,27 +24,27 @@ const UserSchema = new Schema({
     required: false,
   },
   first_name: {
-    type: DataTypes.STRING,
+    type: String,
     allowNull: true,
   },
   last_name: {
-    type: DataTypes.STRING,
+    type: String,
     allowNull: true,
   },
   phone_number: {
-    type: DataTypes.STRING,
+    type: String,
     allowNull: true,
   },
   date_of_birth: {
-    type: DataTypes.DATE,
+    type: String,
     allowNull: true,
   },
   address: {
-    type: DataTypes.TEXT,
+    type: String,
     allowNull: true,
   },
   role: {
-    type: DataTypes.STRING,
+    type: String,
     defaultValue: "admin",
   },
   resetPasswordOTP: {

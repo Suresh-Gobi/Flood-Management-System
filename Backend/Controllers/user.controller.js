@@ -30,11 +30,7 @@ exports.signup = async (req, res) => {
         await user.save();
 
         // Create and return JWT token
-        const payload = {
-            user: {
-                id: user.id
-            }
-        };
+        const payload = { id: user.id };
 
         jwt.sign(
             payload,
@@ -68,11 +64,8 @@ exports.signin = async (req, res) => {
         }
 
         // Create and return JWT token
-        const payload = {
-            user: {
-                id: user.id
-            }
-        };
+        const payload = { id: user.id };
+
 
         jwt.sign(
             payload,
@@ -155,5 +148,31 @@ exports.resetPassword = async (req, res) => {
     } catch (err) {
         console.error('Error resetting password:', err.message);
         res.status(500).send('Server error');
+    }
+};
+
+exports.updateUserDetails = async (req, res) => {
+    const { first_name, last_name, phone_number, date_of_birth, address } = req.body;
+    const userId = req.user.id; // Extracted from authMiddleware
+
+    try {
+        let user = await User.findById(userId);
+        if (!user) {
+            return res.status(404).json({ msg: "User not found" });
+        }
+
+        // Update user details
+        user.first_name = first_name || user.first_name;
+        user.last_name = last_name || user.last_name;
+        user.phone_number = phone_number || user.phone_number;
+        user.date_of_birth = date_of_birth || user.date_of_birth;
+        user.address = address || user.address;
+
+        await user.save(); // Save updated data
+
+        res.json({ msg: "User details updated successfully", user });
+    } catch (err) {
+        console.error("Error updating user details:", err.message);
+        res.status(500).send("Server error");
     }
 };

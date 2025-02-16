@@ -42,7 +42,7 @@ const SignUp = () => {
   };
 
   return (
-    <div className="flex items-center justify-center h-screen bg-gray-100">
+    <div className="flex items-center justify-center h-screen bg-white-100">
       <Card title={<h1 className="text-xl font-semibold text-center">Signup</h1>} className="w-full max-w-3xl p-4 rounded-lg shadow-lg">
         {currentStep === 0 && (
           <Form onFinish={nextStep} autoComplete="off" layout="vertical">

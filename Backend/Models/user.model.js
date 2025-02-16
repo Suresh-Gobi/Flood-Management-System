@@ -25,27 +25,27 @@ const UserSchema = new Schema({
   },
   first_name: {
     type: String,
-    allowNull: true,
+    default: null,
   },
   last_name: {
     type: String,
-    allowNull: true,
+    default: null,
   },
   phone_number: {
     type: String,
-    allowNull: true,
+    default: null,
   },
   date_of_birth: {
     type: String,
-    allowNull: true,
+    default: null,
   },
   address: {
     type: String,
-    allowNull: true,
+    default: null,
   },
   role: {
     type: String,
-    defaultValue: "user",
+    default: "user",
   },
   resetPasswordOTP: {
     type: String,
@@ -58,6 +58,42 @@ const UserSchema = new Schema({
   createdAt: {
     type: Date,
     default: Date.now,
+  },
+  longitude: {
+    type: Number,
+    default: null,
+  },
+  latitude: {
+    type: Number,
+    default: null,
+  },
+  street1: {
+    type: String,
+    default: null,
+  },
+  street2: {
+    type: String,
+    default: null,
+  },
+  city: {
+    type: String,
+    default: null,
+  },
+  province: {
+    type: String,
+    default: null,
+  },
+  district: {
+    type: String,
+    default: null,
+  },
+  postal_code: {
+    type: String,
+    default: null,
+  },
+  country: {
+    type: String,
+    default: null,
   },
 });
 

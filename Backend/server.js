@@ -2,6 +2,7 @@ const express = require("express");
 const cors = require("cors");
 const mongoose = require("mongoose");
 const userRoutes = require("./routes/user.route");
+const deviceRoutes = require("./Routes/device.route");
 require("dotenv").config();
 
 
@@ -23,6 +24,7 @@ mongoose.connect(process.env.MONGODB_URI, {
 
 // AllRoutes
 app.use("/api", userRoutes);
+app.use("/api/device", deviceRoutes);
 
 // Start server
 const PORT = process.env.PORT || 5000;

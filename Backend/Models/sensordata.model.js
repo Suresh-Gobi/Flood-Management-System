@@ -1,4 +1,3 @@
-// models/WaterData.js
 const mongoose = require("mongoose");
 
 const WaterDataSchema = new mongoose.Schema({

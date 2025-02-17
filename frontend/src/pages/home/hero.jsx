@@ -34,20 +34,35 @@ export default function Hero() {
           {devices.map((device) => (
             <div key={device.deviceId} className="p-4 border rounded shadow">
               <h2 className="text-xl font-semibold">{device.name}</h2>
-              <p><strong>Latitude:</strong> {device.latitude}</p>
-              <p><strong>Longitude:</strong> {device.longitude}</p>
-              <p><strong>Data Entries:</strong> {device.data.length}</p>
+              <p>
+                <strong>Latitude:</strong> {device.latitude}
+              </p>
+              <p>
+                <strong>Longitude:</strong> {device.longitude}
+              </p>
+              <p>
+                <strong>Data Entries:</strong> {device.data.length}
+              </p>
 
-              {/* Display Latest Data Entry */}
+              {/* Display All Data Entries */}
               {device.data.length > 0 && (
-                <div className="mt-2 p-2 border rounded bg-gray-100">
-                  <p className="font-semibold">Latest Data Entry:</p>
-                  <p><strong>Time:</strong> {new Date(device.data[0].created_at).toLocaleString()}</p>
-                  {Object.keys(device.data[0])
-                    .filter((key) => key.startsWith("field"))
-                    .map((key) => (
-                      <p key={key}><strong>{key}:</strong> {device.data[0][key]}</p>
-                    ))}
+                <div className="mt-2 p-2 border rounded bg-gray-100 max-h-60 overflow-auto">
+                  <p className="font-semibold">All Data Entries:</p>
+                  {device.data.map((entry, index) => (
+                    <div key={index} className="mb-2 p-2 border-b">
+                      <p>
+                        <strong>Time:</strong>{" "}
+                        {new Date(entry.created_at).toLocaleString()}
+                      </p>
+                      {Object.keys(entry)
+                        .filter((key) => key.startsWith("field"))
+                        .map((key) => (
+                          <p key={key}>
+                            <strong>{key}:</strong> {entry[key]}
+                          </p>
+                        ))}
+                    </div>
+                  ))}
                 </div>
               )}
             </div>

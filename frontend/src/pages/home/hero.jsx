@@ -71,11 +71,32 @@ const GoogleMapComponent = () => {
     const buildContent = (device) => {
       const content = document.createElement("div");
       content.classList.add("device-info");
-      content.innerHTML = `
-        <div class="title">${device.name}</div>
-        <div><strong>Lat:</strong> ${device.latitude}, <strong>Lng:</strong> ${device.longitude}</div>
-        <div><strong>Data Entries:</strong> ${device.data.length}</div>
+      const icon = document.createElement("div");
+      icon.classList.add("home-icon");
+      icon.innerHTML = "🏠";
+      icon.style.cursor = "pointer";
+      icon.style.fontSize = "32px";
+
+      const details = document.createElement("div");
+      details.classList.add("device-details");
+      details.style.display = "none";
+      details.innerHTML = `
+        <div class="card" style="background-color: white; padding: 10px; border-radius: 5px; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
+          <div class="card-header" style="font-weight: bold; font-size: 16px; margin-bottom: 10px;">${device.name}</div>
+          <div class="card-body">
+        <p><strong>Lat:</strong> ${device.latitude}</p>
+        <p><strong>Lng:</strong> ${device.longitude}</p>
+        <p><strong>Data Entries:</strong> ${device.data.length}</p>
+          </div>
+        </div>
       `;
+
+      icon.addEventListener("click", () => {
+        details.style.display = details.style.display === "none" ? "block" : "none";
+      });
+
+      content.appendChild(icon);
+      content.appendChild(details);
       return content;
     };
 

@@ -12,6 +12,7 @@ import Header from "./components/Header";
 import SignupValidation from "./auth/SignupValidation";
 import ResetPassword from "./pages/ResetPassword";
 import Dashboard from "./components/Dashboard";
+import Device from "./pages/dashboard/device";
 
 export default function App() {
   return (
@@ -26,6 +27,7 @@ export default function App() {
         <Route path="/req-otp" element={<ReqOTP />} />
         <Route path="/reset-password" element={<ResetPassword />} />
         <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/Device" element={<Device />} />
         <Route path="/sign-up/verify/:otp" element={<SignupValidation />} />
       </Routes>
     </BrowserRouter>

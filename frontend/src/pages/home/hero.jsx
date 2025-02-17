@@ -1,15 +1,24 @@
 import React, { useEffect, useState } from "react";
+import { GoogleMap, LoadScript, Marker, InfoWindow } from "@react-google-maps/api";
 import axios from "axios";
+
+const mapContainerStyle = {
+  width: "100%",
+  height: "500px",
+};
+
+const defaultCenter = { lat: 7.8731, lng: 80.7718 }; 
 
 export default function Hero() {
   const [devices, setDevices] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [selectedDevice, setSelectedDevice] = useState(null);
 
   useEffect(() => {
     const fetchDeviceData = async () => {
       try {
-        const response = await axios.get("api/device/flood");
+        const response = await axios.get("/api/device/flood");
         setDevices(response.data.devices);
       } catch (err) {
         setError("Failed to fetch device data");
@@ -27,60 +36,42 @@ export default function Hero() {
   return (
     <div className="p-6">
       <h1 className="text-2xl font-bold mb-4">Flood Monitoring Devices</h1>
-      {devices.length === 0 ? (
-        <p>No devices found.</p>
-      ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+
+      <LoadScript googleMapsApiKey="AIzaSyDqyLnWuXJY1luisSVcE3KWF3Pljk7rTDI">
+        <GoogleMap mapContainerStyle={mapContainerStyle} center={defaultCenter} zoom={7}>
           {devices.map((device) => (
-            <div key={device.deviceId} className="p-4 border rounded shadow">
-              <h2 className="text-xl font-semibold">{device.name}</h2>
-              <p>
-                <strong>Latitude:</strong> {device.latitude}
-              </p>
-              <p>
-                <strong>Longitude:</strong> {device.longitude}
-              </p>
-              <p>
-                <strong>Data Entries:</strong> {device.data.length}
-              </p>
-
-              {/* Google Map Embed */}
-              <div className="mt-2">
-                <iframe
-                  width="100%"
-                  height="200"
-                  frameBorder="0"
-                  style={{ border: 0 }}
-                  referrerPolicy="no-referrer-when-downgrade"
-                  src={`https://www.google.com/maps?q=${device.latitude},${device.longitude}&output=embed`}
-                  allowFullScreen
-                ></iframe>
-              </div>
-
-              {/* Display All Data Entries */}
-              {device.data.length > 0 && (
-                <div className="mt-2 p-2 border rounded bg-gray-100 max-h-60 overflow-auto">
-                  <p className="font-semibold">All Data Entries:</p>
-                  {device.data.map((entry, index) => (
-                    <div key={index} className="mb-2 p-2 border-b">
-                      <p>
-                        <strong>Time:</strong> {new Date(entry.created_at).toLocaleString()}
-                      </p>
-                      {Object.keys(entry)
-                        .filter((key) => key.startsWith("field"))
-                        .map((key) => (
-                          <p key={key}>
-                            <strong>{key}:</strong> {entry[key]}
-                          </p>
-                        ))}
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
+            <Marker
+              key={device.deviceId}
+              position={{ lat: device.latitude, lng: device.longitude }}
+              onClick={() => setSelectedDevice(device)}
+            />
           ))}
-        </div>
-      )}
+
+          {selectedDevice && (
+            <InfoWindow
+              position={{ lat: selectedDevice.latitude, lng: selectedDevice.longitude }}
+              onCloseClick={() => setSelectedDevice(null)}
+            >
+              <div>
+                <h2 className="text-lg font-semibold">{selectedDevice.name}</h2>
+                <p><strong>Latitude:</strong> {selectedDevice.latitude}</p>
+                <p><strong>Longitude:</strong> {selectedDevice.longitude}</p>
+
+                {selectedDevice.data.length > 0 && (
+                  <div className="mt-2">
+                    <p className="font-bold">Sensor Data:</p>
+                    <p><strong>Water Level:</strong> {selectedDevice.data[0].field01}</p>
+                    <p><strong>Raining Status:</strong> {selectedDevice.data[0].field02}</p>
+                    <p><strong>Temperature:</strong> {selectedDevice.data[0].field03}°C</p>
+                    <p><strong>Air Pressure:</strong> {selectedDevice.data[0].field04} hPa</p>
+                    <p><strong>Waterfall Level:</strong> {selectedDevice.data[0].field05}</p>
+                  </div>
+                )}
+              </div>
+            </InfoWindow>
+          )}
+        </GoogleMap>
+      </LoadScript>
     </div>
   );
 }

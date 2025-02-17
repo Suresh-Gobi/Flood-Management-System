@@ -34,4 +34,55 @@ const addDevice = async (req, res) => {
   }
 };
 
-module.exports = { addDevice };
+// ✅ Get device by ID
+const getAllDevices = async (req, res) => {
+  try {
+    // Find all devices
+    const devices = await Device.find();
+
+    res.status(200).json({
+      success: true,
+      data: devices,
+    });
+  } catch (error) {
+    console.error("Error getting devices:", error.message);
+    res.status(500).json({
+      success: false,
+      message: "Failed to get devices",
+    });
+  }
+};
+
+// ✅ Update device by ID
+const updateDeviceById = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { name, thingSpeakChannelId, latitude, longitude } = req.body;
+
+    // Find device by ID and update
+    const updatedDevice = await Device.findByIdAndUpdate(
+      id,
+      { name, thingSpeakChannelId, location: { latitude, longitude } },
+      { new: true, runValidators: true }
+    );
+
+    if (!updatedDevice) {
+      return res.status(404).json({ success: false, message: "Device not found" });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: "Device updated successfully",
+      data: updatedDevice,
+    });
+  } catch (error) {
+    console.error("Error updating device:", error.message);
+    res.status(500).json({
+      success: false,
+      message: "Failed to update device",
+    });
+  }
+};
+
+module.exports = { addDevice, getAllDevices, updateDeviceById };
+

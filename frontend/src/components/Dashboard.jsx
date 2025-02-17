@@ -10,6 +10,7 @@ import {
 } from "@ant-design/icons";
 import { Layout, Menu, Breadcrumb, Button, theme } from "antd";
 import Profile from "../pages/Profile";
+import Device from "../pages/dashboard/device";
 
 
 const { Header, Sider, Content, Footer } = Layout;
@@ -18,7 +19,7 @@ const getItem = (label, key, icon) => ({ key, icon, label });
 
 const items = [
   getItem("Overview", "overview", <PieChartOutlined />),
-  getItem("Projects", "projects", <ProjectOutlined />),
+  getItem("Devices", "devices", <ProjectOutlined />),
   getItem("Chat", "chat", <MessageOutlined />),
   getItem("Payment", "payment", <CreditCardOutlined />),
   getItem("Profile", "profile", <UserOutlined />),
@@ -53,7 +54,7 @@ const App = () => {
         <Content style={{ margin: "16px" }}>
           <div style={{ padding: 24, minHeight: 360, background: colorBgContainer, borderRadius: borderRadiusLG }}>
             {selectedKey === "overview" && <div>Overview Content</div>}
-            {selectedKey === "projects" && <div>Projects Content</div>}
+            {selectedKey === "devices" && <Device/>}
             {selectedKey === "chat" && <div>Chat Content</div>}
             {selectedKey === "payment" && <div>Payment Content</div>}
             {selectedKey === "profile" && <Profile/>}

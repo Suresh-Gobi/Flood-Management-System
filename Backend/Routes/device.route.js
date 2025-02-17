@@ -13,6 +13,8 @@ const {
 
 const {
   addDevice,
+  getAllDevices,
+  updateDeviceById,
 } = require("../Controllers/device.controller");
 
 const router = express.Router();
@@ -28,5 +30,9 @@ router.get("/rain/:field", rainGetDeviceData);
 router.get("/rain-channel-status", getChannelInfo);
 
 router.post("/add-device", addDevice);
+
+router.get("/getall-device", getAllDevices);
+
+router.put("/update-device/:id", updateDeviceById);
 
 module.exports = router;

@@ -44,6 +44,19 @@ export default function Hero() {
                 <strong>Data Entries:</strong> {device.data.length}
               </p>
 
+              {/* Google Map Embed */}
+              <div className="mt-2">
+                <iframe
+                  width="100%"
+                  height="200"
+                  frameBorder="0"
+                  style={{ border: 0 }}
+                  referrerPolicy="no-referrer-when-downgrade"
+                  src={`https://www.google.com/maps?q=${device.latitude},${device.longitude}&output=embed`}
+                  allowFullScreen
+                ></iframe>
+              </div>
+
               {/* Display All Data Entries */}
               {device.data.length > 0 && (
                 <div className="mt-2 p-2 border rounded bg-gray-100 max-h-60 overflow-auto">
@@ -51,8 +64,7 @@ export default function Hero() {
                   {device.data.map((entry, index) => (
                     <div key={index} className="mb-2 p-2 border-b">
                       <p>
-                        <strong>Time:</strong>{" "}
-                        {new Date(entry.created_at).toLocaleString()}
+                        <strong>Time:</strong> {new Date(entry.created_at).toLocaleString()}
                       </p>
                       {Object.keys(entry)
                         .filter((key) => key.startsWith("field"))

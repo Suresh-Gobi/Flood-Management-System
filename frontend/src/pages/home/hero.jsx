@@ -1,23 +1,15 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { GoogleMap, LoadScript, Marker } from "@react-google-maps/api";
 
-const mapContainerStyle = {
-  width: "100%",
-  height: "500px",
-};
-
-const defaultCenter = { lat: 7.8731, lng: 80.7718 };
-
-export default function Hero() {
+const GoogleMapComponent = () => {
   const [devices, setDevices] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     const fetchDeviceData = async () => {
       try {
-        const response = await axios.get("api/device/flood");
+        const response = await axios.get("/api/device/flood");
         setDevices(response.data.devices);
       } catch (err) {
         setError("Failed to fetch device data");
@@ -29,80 +21,73 @@ export default function Hero() {
     fetchDeviceData();
   }, []);
 
+  useEffect(() => {
+    const loadGoogleMaps = async () => {
+      if (!window.google) {
+        const script = document.createElement("script");
+        script.src = `https://maps.googleapis.com/maps/api/js?key=AIzaSyDqyLnWuXJY1luisSVcE3KWF3Pljk7rTDI&libraries=marker`;
+        script.async = true;
+        script.onload = initializeMap;
+        document.head.appendChild(script);
+      } else {
+        initializeMap();
+      }
+    };
+
+    const initializeMap = async () => {
+      const { Map } = await google.maps.importLibrary("maps");
+      const { AdvancedMarkerElement } = await google.maps.importLibrary("marker");
+
+      const map = new Map(document.getElementById("map"), {
+        zoom: 7,
+        center: { lat: 7.8731, lng: 80.7718 },
+        mapId: "1772f9e1043af2db",
+      });
+
+      devices.forEach((device) => {
+        if (!device.latitude || !device.longitude) return;
+
+        const marker = new google.maps.marker.AdvancedMarkerElement({
+          map,
+          position: { lat: parseFloat(device.latitude), lng: parseFloat(device.longitude) },
+          title: device.name,
+          content: buildContent(device),
+        });
+
+        marker.addListener("click", () => toggleHighlight(marker));
+      });
+    };
+
+    const toggleHighlight = (marker) => {
+      if (marker.content.classList.contains("highlight")) {
+        marker.content.classList.remove("highlight");
+        marker.zIndex = null;
+      } else {
+        marker.content.classList.add("highlight");
+        marker.zIndex = 1;
+      }
+    };
+
+    const buildContent = (device) => {
+      const content = document.createElement("div");
+      content.classList.add("device-info");
+      content.innerHTML = `
+        <div class="title">${device.name}</div>
+        <div><strong>Lat:</strong> ${device.latitude}, <strong>Lng:</strong> ${device.longitude}</div>
+        <div><strong>Data Entries:</strong> ${device.data.length}</div>
+      `;
+      return content;
+    };
+
+    if (devices.length > 0) {
+      loadGoogleMaps();
+    }
+  }, [devices]);
+
   if (loading) return <p>Loading...</p>;
   if (error) return <p>{error}</p>;
 
-  return (
-    <div className="p-6">
-      <h1 className="text-2xl font-bold mb-4">Flood Monitoring Devices</h1>
-      {devices.length === 0 ? (
-        <p>No devices found.</p>
-      ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {devices.map((device) => (
-            <div key={device.deviceId} className="p-4 border rounded shadow">
-              <h2 className="text-xl font-semibold">{device.name}</h2>
-              <p>
-                <strong>Latitude:</strong> {device.latitude}
-              </p>
-              <p>
-                <strong>Longitude:</strong> {device.longitude}
-              </p>
-              <p>
-                <strong>Data Entries:</strong> {device.data.length}
-              </p>
+  return <div id="map" style={{ height: "100vh", width: "100%" }}></div>;
+};
 
-              {/* Display Latest Data Entry */}
-              {device.data.length > 0 && (
-                <div className="mt-2 p-2 border rounded bg-gray-100">
-                  <p className="font-semibold">Latest Data Entry:</p>
-                  <p>
-                    <strong>Time:</strong>{" "}
-                    {new Date(device.data[0].created_at).toLocaleString()}
-                  </p>
-                  {Object.keys(device.data[0])
-                    .filter((key) => key.startsWith("field"))
-                    .map((key) => (
-                      <p key={key}>
-                        <strong>{key}:</strong> {device.data[0][key]}
-                      </p>
-                    ))}
-                </div>
-              )}
-            </div>
-          ))}
-
-          {devices.map((device) => {
-            const lat = parseFloat(device.latitude);
-            const lng = parseFloat(device.longitude);
-
-            if (isNaN(lat) || isNaN(lng)) return null; // Skip invalid coordinates
-
-            return <Marker key={device.deviceId} position={{ lat, lng }} />;
-          })}
-        </div>
-      )}
-
-      {/* Google Map Below Retrieved Data */}
-      <div className="mt-6">
-        <h2 className="text-xl font-bold mb-4">Device Locations on Map</h2>
-        <LoadScript googleMapsApiKey="AIzaSyDqyLnWuXJY1luisSVcE3KWF3Pljk7rTDI">
-          <GoogleMap
-            mapContainerStyle={mapContainerStyle}
-            center={defaultCenter}
-            zoom={7}
-          >
-            {devices.map((device) => {
-              const lat = device.latitude;
-              const lng = device.longitude;
-
-              if (!lat || !lng) return null; // Skip markers with no valid location
-
-              return <Marker key={device.deviceId} position={{ lat, lng }} />;
-            })}
-          </GoogleMap>
-        </LoadScript>
-      </div>
-    </div>
-  );
-}
+export default GoogleMapComponent;

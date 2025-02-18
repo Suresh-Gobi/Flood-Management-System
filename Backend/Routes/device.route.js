@@ -15,6 +15,7 @@ const {
   addDevice,
   getAllDevices,
   updateDeviceById,
+  deleteDeviceById,
 } = require("../Controllers/device.controller");
 
 const router = express.Router();
@@ -34,5 +35,7 @@ router.post("/add-device", addDevice);
 router.get("/getall-device", getAllDevices);
 
 router.put("/update-device/:id", updateDeviceById);
+
+router.delete("/delete-device/:id", deleteDeviceById);
 
 module.exports = router;

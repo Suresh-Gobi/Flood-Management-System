@@ -80,5 +80,23 @@ const updateDeviceById = async (req, res) => {
   }
 };
 
-module.exports = { addDevice, getAllDevices, updateDeviceById };
+// ✅ Delete device by ID
+const deleteDeviceById = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const deletedDevice = await Device.findByIdAndDelete(id);
+
+    if (!deletedDevice) {
+      return res.status(404).json({ success: false, message: "Device not found" });
+    }
+
+    res.json({ success: true, message: "Device deleted successfully" });
+  } catch (error) {
+    console.error("Error deleting device:", error);
+    res.status(500).json({ success: false, message: "Internal Server Error" });
+  }
+};
+
+module.exports = { addDevice, getAllDevices, updateDeviceById, deleteDeviceById };
 

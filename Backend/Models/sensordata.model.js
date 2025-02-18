@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 
 const WaterDataSchema = new mongoose.Schema({
-  deviceId: { type: mongoose.Schema.Types.ObjectId, ref: "Device", required: true }, // Reference to Device
+  deviceId: { type: mongoose.Schema.Types.ObjectId, ref: "Device", required: true },
   waterLevel: Number,
   rainingStatus: String,
   temperature: Number,

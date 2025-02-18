@@ -86,7 +86,7 @@ const GoogleMapComponent = () => {
           <div class="card-body">
         <p><strong>Lat:</strong> ${device.latitude}</p>
         <p><strong>Lng:</strong> ${device.longitude}</p>
-        <p><strong>Data Entries:</strong> ${device.data.length}</p>
+        
           </div>
         </div>
       `;

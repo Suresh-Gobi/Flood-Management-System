@@ -56,31 +56,27 @@ const getAllDevices = async (req, res) => {
 // ✅ Update device by ID
 const updateDeviceById = async (req, res) => {
   try {
-    const { id } = req.params;
-    const { name, thingSpeakChannelId, latitude, longitude } = req.body;
+      const { id } = req.params;
+      const { name, thingSpeakChannelId, location } = req.body;
 
-    // Find device by ID and update
-    const updatedDevice = await Device.findByIdAndUpdate(
-      id,
-      { name, thingSpeakChannelId, location: { latitude, longitude } },
-      { new: true, runValidators: true }
-    );
+      if (!name || !thingSpeakChannelId || !location || !location.latitude || !location.longitude) {
+          return res.status(400).json({ success: false, message: "Missing required fields" });
+      }
 
-    if (!updatedDevice) {
-      return res.status(404).json({ success: false, message: "Device not found" });
-    }
+      const updatedDevice = await Device.findByIdAndUpdate(
+          id,
+          { name, thingSpeakChannelId, location },
+          { new: true }
+      );
 
-    res.status(200).json({
-      success: true,
-      message: "Device updated successfully",
-      data: updatedDevice,
-    });
+      if (!updatedDevice) {
+          return res.status(404).json({ success: false, message: "Device not found" });
+      }
+
+      res.json({ success: true, message: "Device updated successfully", data: updatedDevice });
   } catch (error) {
-    console.error("Error updating device:", error.message);
-    res.status(500).json({
-      success: false,
-      message: "Failed to update device",
-    });
+      console.error("Error updating device:", error);
+      res.status(500).json({ success: false, message: "Internal Server Error" });
   }
 };
 

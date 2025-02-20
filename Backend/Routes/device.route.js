@@ -3,6 +3,8 @@ const {
   getDeviceData,
   getFieldData,
   getChannelStatus,
+  getAllThingSpeakData,
+  getThingSpeakDataDirect,
 } = require("../Controllers/floodsensor.controller");
 
 const {
@@ -25,6 +27,10 @@ router.get("/flood", getDeviceData);
 router.get("/flood/:field", getFieldData);
 
 router.get("/flood-channel-status", getChannelStatus);
+
+router.get("/get-thinkspeakdata", getThingSpeakDataDirect);
+
+// router.get("/get-thinkspeakdata", getAllThingSpeakData);
 
 router.get("/rain", getSensorData);
 router.get("/rain/:field", rainGetDeviceData);

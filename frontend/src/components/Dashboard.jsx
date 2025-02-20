@@ -11,6 +11,7 @@ import {
 import { Layout, Menu, Breadcrumb, Button, theme } from "antd";
 import Profile from "../pages/Profile";
 import Device from "../pages/dashboard/device";
+import WeatherDashboard from "../pages/dashboard/weatherDashboard";
 
 
 const { Header, Sider, Content, Footer } = Layout;
@@ -18,7 +19,7 @@ const { Header, Sider, Content, Footer } = Layout;
 const getItem = (label, key, icon) => ({ key, icon, label });
 
 const items = [
-  getItem("Overview", "overview", <PieChartOutlined />),
+  getItem("Weather", "weather", <PieChartOutlined />),
   getItem("Devices", "devices", <ProjectOutlined />),
   getItem("Chat", "chat", <MessageOutlined />),
   getItem("Payment", "payment", <CreditCardOutlined />),
@@ -53,14 +54,13 @@ const App = () => {
         </Header>
         <Content style={{ margin: "16px" }}>
           <div style={{ padding: 24, minHeight: 360, background: colorBgContainer, borderRadius: borderRadiusLG }}>
-            {selectedKey === "overview" && <div>Overview Content</div>}
+            {selectedKey === "weather" && <WeatherDashboard/>}
             {selectedKey === "devices" && <Device/>}
             {selectedKey === "chat" && <div>Chat Content</div>}
             {selectedKey === "payment" && <div>Payment Content</div>}
             {selectedKey === "profile" && <Profile/>}
           </div>
         </Content>
-        <Footer style={{ textAlign: "center" }}>Ant Design ©{new Date().getFullYear()} Created by Ant UED</Footer>
       </Layout>
     </Layout>
   );

@@ -37,6 +37,7 @@ export default function WeatherDashboard() {
           className="bg-white p-4 rounded shadow cursor-pointer"
           onClick={() => setSelectedDevice(device)}
         >
+          <h2 className="text-lg font-bold">{device.deviceId}</h2>
           <h2 className="text-lg font-bold">{device.name}</h2>
           <p>📍 Location: {device.latitude}, {device.longitude}</p>
           {device.latestData ? (

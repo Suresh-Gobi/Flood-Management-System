@@ -195,7 +195,7 @@ const getThingSpeakDataDirect = async (req, res) => {
         console.log(`Fetching latest data for Device: ${device.name} (ID: ${device._id})`);
 
         const response = await axios.get(`${BASE_URL}/${device.thingSpeakChannelId}/feeds.json`, {
-          params: { api_key: API_KEY, results: 1 }, // Fetch latest result
+          params: { api_key: API_KEY }, // Fetch latest result
         });
 
         const feeds = response.data.feeds;
@@ -262,20 +262,22 @@ const getThingSpeakDataDirect = async (req, res) => {
 
 
 // ✅ Get all ThingSpeak data
-const getAllThingSpeakData = async (req, res) => {
+const getAllThingSpeakDataByID = async (req, res) => {
   try {
-    console.log("Fetching latest ThingSpeak data from MongoDB...");
-    const latestData = await ThingSpeakData.find().sort({ createdAt: -1 }).limit(10); // Fetch latest 10 entries
+    const { deviceId } = req.params;
 
-    if (!latestData.length) {
-      console.log("No ThingSpeak data found.");
-      return res.status(404).json({ success: false, message: "No ThingSpeak data found" });
+    console.log(`Fetching ThingSpeak data for device ID: ${deviceId} from MongoDB...`);
+    const deviceData = await ThingSpeakData.find({ deviceId }).sort({ createdAt: -1 }); // Fetch all entries for the device
+
+    if (!deviceData.length) {
+      console.log(`No ThingSpeak data found for device ID: ${deviceId}.`);
+      return res.status(404).json({ success: false, message: "No ThingSpeak data found for this device" });
     }
 
-    console.log(`Found ${latestData.length} entries of ThingSpeak data.`);
+    console.log(`Found ${deviceData.length} entries of ThingSpeak data for device ID: ${deviceId}.`);
     res.status(200).json({
       success: true,
-      data: latestData,
+      data: deviceData,
     });
   } catch (error) {
     console.error("Error fetching ThingSpeak data:", error.message);
@@ -284,4 +286,4 @@ const getAllThingSpeakData = async (req, res) => {
 };
 
 
-module.exports = { getDeviceData, getFieldData, getChannelStatus, getAllThingSpeakData, getThingSpeakDataDirect };
+module.exports = { getDeviceData, getFieldData, getChannelStatus, getAllThingSpeakDataByID, getThingSpeakDataDirect };

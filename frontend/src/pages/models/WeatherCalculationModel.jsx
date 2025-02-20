@@ -76,7 +76,9 @@ export default function WeatherCalculationModel({ device, onClose }) {
             <div id="map" style={mapContainerStyle}></div>
             <div style={{ display: "flex", justifyContent: "space-around", margin: "20px 0" }}>
                 <div style={{ textAlign: "center" }}>
-                    <h3>Water Level</h3>
+                    
+                    <h3>Water Level : {device?.deviceId}</h3>
+
                     <LiquidFillGauge width={150} height={150} value={device?.latestData?.waterLevel || 0} riseAnimation waveAnimation />
                 </div>
                 <div style={{ textAlign: "center" }}>

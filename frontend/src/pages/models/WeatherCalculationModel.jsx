@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Modal, Button } from "antd";
+import { jsPDF } from "jspdf";
 import { GoogleMap, Marker } from "@react-google-maps/api";
 import { Line } from "react-chartjs-2";
 import "chart.js/auto";
@@ -89,12 +90,36 @@ export default function WeatherCalculationModel({ device, onClose }) {
     ],
   });
 
+  const generatePDF = () => {
+    const doc = new jsPDF();
+    doc.setFontSize(18);
+    doc.text("Weather Report", 80, 10);
+    doc.setFontSize(12);
+
+    // Device details
+    doc.text(`Device Name: ${device?.name || "N/A"}`, 10, 30);
+    doc.text(`Location: ${device?.latitude}, ${device?.longitude}`, 10, 40);
+    doc.text(`Water Level: ${device?.latestData?.waterLevel || 0}m`, 10, 50);
+    doc.text(`Temperature: ${device?.latestData?.temperature || 0}°C`, 10, 60);
+    doc.text(`Rainfall: ${device?.latestData?.rainfall || 0}mm`, 10, 70);
+    doc.text(`Air Pressure: ${device?.latestData?.airPressure || 0} hPa`, 10, 80);
+
+    doc.save(`Weather_Report_${device?.name || "Device"}.pdf`);
+  };
+
   return (
     <Modal
       title={device?.name || "Weather Data"}
       open={true}
       onCancel={onClose}
-      footer={null}
+      footer={[
+        <Button key="download" type="default" onClick={generatePDF}>
+          Download Data in PDF
+        </Button>,
+        <Button key="close" type="primary" danger onClick={onClose}>
+          Close
+        </Button>,
+      ]}
       width={1200}
     >
       <div id="map" style={mapContainerStyle}></div>
@@ -204,9 +229,7 @@ export default function WeatherCalculationModel({ device, onClose }) {
                     <pre>{JSON.stringify(thinkSpeakData, null, 2)}</pre>
                 </div>
             )} */}
-      <Button type="primary" danger onClick={onClose} className="mt-4">
-        Close
-      </Button>
+
     </Modal>
   );
 }

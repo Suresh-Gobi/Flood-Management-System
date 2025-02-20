@@ -1,6 +1,9 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import { Card, Spin, Typography, Row, Col, Modal } from "antd";
 import WeatherCalculationModel from "../models/WeatherCalculationModel";
+
+const { Title, Text } = Typography;
 
 export default function WeatherDashboard() {
   const [devices, setDevices] = useState([]);
@@ -26,40 +29,38 @@ export default function WeatherDashboard() {
     fetchData();
   }, []);
 
-  if (loading) return <p>Loading...</p>;
-  if (error) return <p>Error: {error}</p>;
+  if (loading) return <Spin size="large" style={{ display: "block", margin: "20px auto" }} />;
+  if (error) return <Text type="danger">Error: {error}</Text>;
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 p-4">
+    <Row gutter={[16, 16]} style={{ padding: "20px" }}>
       {devices.map((device) => (
-        <div
-          key={device.deviceId}
-          className="bg-white p-4 rounded shadow cursor-pointer"
-          onClick={() => setSelectedDevice(device)}
-        >
-          <h2 className="text-lg font-bold">{device.deviceId}</h2>
-          <h2 className="text-lg font-bold">{device.name}</h2>
-          <p>📍 Location: {device.latitude}, {device.longitude}</p>
-          {device.latestData ? (
-            <div>
-              <p>🌊 Water Level: {device.latestData.waterLevel}m</p>
-              <p>🌧️ Raining: {device.latestData.rainingStatus}</p>
-              <p>🌡️ Temperature: {device.latestData.temperature}°C</p>
-              <p>🌬️ Air Pressure: {device.latestData.airPressure}hPa</p>
-              <p>📏 Elevation: {device.latestData.elevation}m</p>
-              <p>🔄 Status: {device.latestData.status}</p>
-            </div>
-          ) : (
-            <p>No recent data available</p>
-          )}
-        </div>
+        <Col xs={24} sm={12} md={8} key={device.deviceId}>
+          <Card
+            hoverable
+            title={<Title level={4}>{device.name}</Title>}
+            onClick={() => setSelectedDevice(device)}
+          >
+            <Text>📍 Location: {device.latitude}, {device.longitude}</Text>
+            {device.latestData ? (
+              <div>
+                <Text>🌊{device.latestData.waterLevel}m</Text><br />
+                <Text>🌧️ {device.latestData.rainingStatus}</Text><br />
+                <Text>🌡️{device.latestData.temperature}°C</Text><br />
+                <Text>🌬️ {device.latestData.airPressure}hPa</Text>
+              </div>
+            ) : (
+              <Text type="secondary">No recent data available</Text>
+            )}
+          </Card>
+        </Col>
       ))}
 
       {selectedDevice && (
-        <WeatherCalculationModel device={selectedDevice} onClose={() => setSelectedDevice(null)} />
+        <Modal open={true} onCancel={() => setSelectedDevice(null)} footer={null} width={1200}>
+          <WeatherCalculationModel device={selectedDevice} onClose={() => setSelectedDevice(null)} />
+        </Modal>
       )}
-    </div>
+    </Row>
   );
 }
-
-

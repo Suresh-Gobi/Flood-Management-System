@@ -1,21 +1,28 @@
-const express = require('express');
-const userController = require('../Controllers/user.controller');
+const express = require("express");
+const userController = require("../Controllers/user.controller");
+const authMiddleware = require("../Utils/auth");
+const authorize = require("../Utils/roleauth");
 
 const router = express.Router();
 
 // Route to get all users
-router.get('/', userController.getAllUsers);
+router.post("/signup", userController.signup);
 
-// Route to get a single user by ID
-router.get('/:id', userController.getUserById);
+router.post("/signin", userController.signin);
 
-// Route to create a new user
-router.post('/', userController.createUser);
+router.post("/reqotp", userController.sendPasswordResetOTP);
 
-// Route to update an existing user by ID
-router.put('/:id', userController.updateUser);
+router.post("/reset-password", userController.resetPassword);
 
-// Route to delete a user by ID
-router.delete('/:id', userController.deleteUser);
+router.put("/user/update", authMiddleware, userController.updateUserDetails);
+
+router.get("/user/get", authMiddleware, userController.getUserDetails);
+
+// router.get(
+//     "/loggedusers",
+//     authMiddleware,
+//     authorize(["user"]),
+//     userController.getLoggedUserDetails
+//   );
 
 module.exports = router;

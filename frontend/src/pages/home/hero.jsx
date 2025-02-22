@@ -36,7 +36,9 @@ const GoogleMapComponent = () => {
 
     const initializeMap = async () => {
       const { Map } = await google.maps.importLibrary("maps");
-      const { AdvancedMarkerElement } = await google.maps.importLibrary("marker");
+      const { AdvancedMarkerElement } = await google.maps.importLibrary(
+        "marker"
+      );
 
       const map = new Map(document.getElementById("map"), {
         zoom: 7,
@@ -49,7 +51,10 @@ const GoogleMapComponent = () => {
 
         const marker = new google.maps.marker.AdvancedMarkerElement({
           map,
-          position: { lat: parseFloat(device.latitude), lng: parseFloat(device.longitude) },
+          position: {
+            lat: parseFloat(device.latitude),
+            lng: parseFloat(device.longitude),
+          },
           title: device.name,
           content: buildContent(device),
         });
@@ -71,46 +76,60 @@ const GoogleMapComponent = () => {
     const buildContent = (device) => {
       const content = document.createElement("div");
       content.classList.add("device-info");
-    
+
       const icon = document.createElement("div");
       icon.classList.add("home-icon");
-      icon.innerHTML = "🏠";
+      icon.innerHTML = "💧";
       icon.style.cursor = "pointer";
       icon.style.fontSize = "32px";
-    
+
       const details = document.createElement("div");
       details.classList.add("device-details");
       details.style.display = "none";
-    
-      // Extract latest data
+
       const latestData = device.latestData || {};
-    
+
       details.innerHTML = `
-        <div class="card" style="background-color: white; padding: 10px; border-radius: 5px; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
-          <div class="card-header" style="font-weight: bold; font-size: 16px; margin-bottom: 10px;">${device.name}</div>
+        <div class="card" style="background-color: white; padding: 10px; border-radius: 5px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); font-size: 16px;">
+          <div class="card-header" style="font-weight: bold; font-size: 18px; margin-bottom: 10px;">${
+        device.name
+          }</div>
           <div class="card-body">
-            <p><strong>Lat:</strong> ${device.latitude}</p>
-            <p><strong>Lng:</strong> ${device.longitude}</p>
-            <p><strong>Water Level:</strong> ${latestData.waterLevel || "N/A"}</p>
-            <p><strong>Raining Status:</strong> ${latestData.rainingStatus || "N/A"}</p>
-            <p><strong>Temperature:</strong> ${latestData.temperature || "N/A"}</p>
-            <p><strong>Air Pressure:</strong> ${latestData.airPressure || "N/A"}</p>
-            <p><strong>Waterfall Level:</strong> ${latestData.waterfallLevel || "N/A"}</p>
-            <p><strong>Status:</strong> ${latestData.status || "Unknown"}</p>
+          <hr/>
+        <div style="display: flex; justify-content: space-between; column-gap: 20px; margin: 10px 0;">
+          <p><strong>Water Level:</strong> ${
+        latestData.waterLevel || "N/A"
+          } <span>💧</span></p>
+          <p><strong>Raining Status:</strong> ${
+        latestData.rainingStatus === 1 ? "Raining" : "No Rain"
+          } <span>🌧️</span></p>
+        </div>
+        <div style="display: flex; justify-content: space-between; column-gap: 20px; margin: 10px 0;">
+          <p><strong>Temperature:</strong> ${
+        latestData.temperature || "N/A"
+          } <span>🌡️</span></p>
+          <p><strong>Air Pressure:</strong> ${
+        latestData.airPressure || "N/A"
+          } <span>🌬️</span></p>
+        </div>
+        <div style="display: flex; justify-content: space-between; column-gap: 20px; margin: 10px 0;">
+          <p><strong>Waterfall Level:</strong> ${
+        latestData.waterfallLevel || "N/A"
+          } <span>🌊</span></p>
+        </div>
           </div>
         </div>
       `;
-    
+
       icon.addEventListener("click", () => {
-        details.style.display = details.style.display === "none" ? "block" : "none";
+        details.style.display =
+          details.style.display === "none" ? "block" : "none";
       });
-    
+
       content.appendChild(icon);
       content.appendChild(details);
       return content;
     };
-    
-    
 
     if (devices.length > 0) {
       loadGoogleMaps();
@@ -120,7 +139,17 @@ const GoogleMapComponent = () => {
   if (loading) return <p>Loading...</p>;
   if (error) return <p>{error}</p>;
 
-  return <div id="map" style={{ height: "100vh", width: "100%" }}></div>;
+  return (
+    <div
+      id="map"
+      style={{
+        height: "100vh",
+        width: "80%",
+        marginTop: "50px",
+        marginLeft: "300px",
+      }}
+    ></div>
+  );
 };
 
 export default GoogleMapComponent;

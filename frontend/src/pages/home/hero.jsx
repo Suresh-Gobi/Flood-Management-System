@@ -1,24 +1,40 @@
-import React, { useEffect, useState } from "react";
-import axios from "axios";
+import React, { useEffect, useState, useRef } from "react";
+import { io } from "socket.io-client";
 
 const GoogleMapComponent = () => {
   const [devices, setDevices] = useState([]);
-  const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const mapRef = useRef(null);
+  const markersRef = useRef([]);
 
   useEffect(() => {
-    const fetchDeviceData = async () => {
-      try {
-        const response = await axios.get("/api/device/get-thinkspeakdata");
-        setDevices(response.data.devices);
-      } catch (err) {
-        setError("Failed to fetch device data");
-      } finally {
-        setLoading(false);
-      }
-    };
+    const socket = io("http://localhost:3000");
 
-    fetchDeviceData();
+    socket.on("connect", () => {
+      console.log("Connected to socket server");
+    });
+
+    socket.on("deviceData", (data) => {
+      console.log("Received data:", data);
+      if (Array.isArray(data)) {
+        setDevices(data);
+      } else if (data && Array.isArray(data.devices)) {
+        setDevices(data.devices);
+      } else {
+        console.error("Invalid data format received:", data);
+        setDevices([]);
+        setError("Invalid data format received");
+      }
+    });
+
+    socket.on("error", (err) => {
+      console.error("Socket error:", err);
+      setError("Failed to fetch device data");
+    });
+
+    return () => {
+      socket.disconnect();
+    };
   }, []);
 
   useEffect(() => {
@@ -35,22 +51,29 @@ const GoogleMapComponent = () => {
     };
 
     const initializeMap = async () => {
-      const { Map } = await google.maps.importLibrary("maps");
-      const { AdvancedMarkerElement } = await google.maps.importLibrary(
-        "marker"
-      );
+      if (!mapRef.current) {
+        const { Map } = await google.maps.importLibrary("maps");
+        mapRef.current = new Map(document.getElementById("map"), {
+          zoom: 7,
+          center: { lat: 7.8731, lng: 80.7718 },
+          mapId: "1772f9e1043af2db",
+        });
+      }
+      updateMarkers();
+    };
 
-      const map = new Map(document.getElementById("map"), {
-        zoom: 7,
-        center: { lat: 7.8731, lng: 80.7718 },
-        mapId: "1772f9e1043af2db",
-      });
+    const updateMarkers = async () => {
+      const { AdvancedMarkerElement } = await google.maps.importLibrary("marker");
+
+      // Clear existing markers
+      markersRef.current.forEach(marker => marker.setMap(null));
+      markersRef.current = [];
 
       devices.forEach((device) => {
         if (!device.latitude || !device.longitude) return;
 
         const marker = new google.maps.marker.AdvancedMarkerElement({
-          map,
+          map: mapRef.current,
           position: {
             lat: parseFloat(device.latitude),
             lng: parseFloat(device.longitude),
@@ -60,6 +83,7 @@ const GoogleMapComponent = () => {
         });
 
         marker.addListener("click", () => toggleHighlight(marker));
+        markersRef.current.push(marker);
       });
     };
 
@@ -91,39 +115,20 @@ const GoogleMapComponent = () => {
 
       details.innerHTML = `
         <div class="card" style="background-color: white; padding: 10px; border-radius: 5px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); font-size: 16px;">
-          <div class="card-header" style="font-weight: bold; font-size: 18px; margin-bottom: 10px;">${
-        device.name
-          }</div>
+          <div class="card-header" style="font-weight: bold; font-size: 18px; margin-bottom: 10px;">${device.name}</div>
           <div class="card-body">
-          <hr/>
-        <div style="display: flex; justify-content: space-between; column-gap: 20px; margin: 10px 0;">
-          <p><strong>Water Level:</strong> ${
-        latestData.waterLevel || "N/A"
-          } ${latestData.waterLevel > 8 ? '<span>💧</span>' : ''}</p>
-          <p><strong>Raining Status:</strong> ${
-        latestData.rainingStatus === 1 ? "Raining" : "No Rain"
-          } <span>🌧️</span></p>
-        </div>
-        <div style="display: flex; justify-content: space-between; column-gap: 20px; margin: 10px 0;">
-          <p><strong>Temperature:</strong> ${
-        latestData.temperature || "N/A"
-          } <span>🌡️</span></p>
-          <p><strong>Air Pressure:</strong> ${
-        latestData.airPressure || "N/A"
-          } <span>🌬️</span></p>
-        </div>
-        <div style="display: flex; justify-content: space-between; column-gap: 20px; margin: 10px 0;">
-          <p><strong>Waterfall Level:</strong> ${
-        latestData.waterfallLevel || "N/A"
-          } <span>🌊</span></p>
-        </div>
+            <hr/>
+            <p><strong>Water Level:</strong> ${latestData.waterLevel || "N/A"} ${latestData.waterLevel > 8 ? '<span>💧</span>' : ''}</p>
+            <p><strong>Raining Status:</strong> ${latestData.rainingStatus === 1 ? "Raining" : "No Rain"} <span>🌧️</span></p>
+            <p><strong>Temperature:</strong> ${latestData.temperature || "N/A"} <span>🌡️</span></p>
+            <p><strong>Air Pressure:</strong> ${latestData.airPressure || "N/A"} <span>🌬️</span></p>
+            <p><strong>Waterfall Level:</strong> ${latestData.waterfallLevel || "N/A"} <span>🌊</span></p>
           </div>
         </div>
       `;
 
       icon.addEventListener("click", () => {
-        details.style.display =
-          details.style.display === "none" ? "block" : "none";
+        details.style.display = details.style.display === "none" ? "block" : "none";
       });
 
       content.appendChild(icon);
@@ -131,12 +136,9 @@ const GoogleMapComponent = () => {
       return content;
     };
 
-    if (devices.length > 0) {
-      loadGoogleMaps();
-    }
+    loadGoogleMaps();
   }, [devices]);
 
-  if (loading) return <p>Loading...</p>;
   if (error) return <p>{error}</p>;
 
   return (

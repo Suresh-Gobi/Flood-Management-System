@@ -261,6 +261,90 @@ const getThingSpeakDataDirect = async (req, res) => {
 };
 
 
+const startDeviceDataUpdates = (io) => {
+  const fetchAndEmitDeviceData = async () => {
+    try {
+      console.log("Fetching devices from MongoDB...");
+      const devices = await Device.find();
+
+      if (!devices.length) {
+        console.log("No devices found.");
+        return;
+      }
+
+      console.log(`Found ${devices.length} devices. Fetching latest data...`);
+
+      const deviceDataPromises = devices.map(async (device) => {
+        try {
+          console.log(`Fetching data for Device: ${device.name} (ID: ${device._id})`);
+
+          const response = await axios.get(`${BASE_URL}/${device.thingSpeakChannelId}/feeds.json`, {
+            params: { api_key: API_KEY },
+          });
+
+          const feeds = response.data.feeds;
+          if (!feeds || feeds.length === 0) {
+            console.log(`No data available for ${device.name}`);
+            return {
+              deviceId: device._id,
+              name: device.name,
+              latitude: device.location?.latitude,
+              longitude: device.location?.longitude,
+              latestData: null,
+              error: "No data available",
+            };
+          }
+
+          const latestEntry = feeds[feeds.length - 1]; // Get the most recent entry
+
+          return {
+            deviceId: device._id,
+            name: device.name,
+            latitude: device.location?.latitude,
+            longitude: device.location?.longitude,
+            latestData: {
+              entryId: latestEntry.entry_id,
+              createdAt: new Date(latestEntry.created_at),
+              waterLevel: latestEntry.field1 ? parseFloat(latestEntry.field1) : null,
+              rainingStatus: latestEntry.field2 || "Unknown",
+              temperature: latestEntry.field3 ? parseFloat(latestEntry.field3) : null,
+              airPressure: latestEntry.field4 ? parseFloat(latestEntry.field4) : null,
+              waterfallLevel: latestEntry.field5 ? parseFloat(latestEntry.field5) : null,
+              latitude: latestEntry.latitude ? parseFloat(latestEntry.latitude) : null,
+              longitude: latestEntry.longitude ? parseFloat(latestEntry.longitude) : null,
+              elevation: latestEntry.elevation ? parseFloat(latestEntry.elevation) : null,
+              status: latestEntry.status || "Unknown",
+            },
+          };
+        } catch (error) {
+          console.error(`Error fetching data for device ${device.name}:`, error.message);
+          return {
+            deviceId: device._id,
+            name: device.name,
+            latitude: device.location?.latitude,
+            longitude: device.location?.longitude,
+            latestData: null,
+            error: "Failed to fetch data",
+          };
+        }
+      });
+
+      const allDeviceData = await Promise.all(deviceDataPromises);
+
+      // Emit latest data to all connected clients
+      io.emit("deviceData", allDeviceData);
+      console.log("Emitted updated device data to clients.");
+    } catch (error) {
+      console.error("Error fetching device data:", error.message);
+    }
+  };
+
+  // Fetch and send data every 5 seconds
+  setInterval(fetchAndEmitDeviceData, 5000);
+};
+
+
+
 // ✅ Get all ThingSpeak data
 const getAllThingSpeakDataByID = async (req, res) => {
   try {
@@ -286,4 +370,4 @@ const getAllThingSpeakDataByID = async (req, res) => {
 };
 
 
-module.exports = { getDeviceData, getFieldData, getChannelStatus, getAllThingSpeakDataByID, getThingSpeakDataDirect };
+module.exports = { getDeviceData, getFieldData, getChannelStatus, getAllThingSpeakDataByID, getThingSpeakDataDirect, startDeviceDataUpdates };

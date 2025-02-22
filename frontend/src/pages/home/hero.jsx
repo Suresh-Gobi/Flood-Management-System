@@ -99,7 +99,7 @@ const GoogleMapComponent = () => {
         <div style="display: flex; justify-content: space-between; column-gap: 20px; margin: 10px 0;">
           <p><strong>Water Level:</strong> ${
         latestData.waterLevel || "N/A"
-          } <span>💧</span></p>
+          } ${latestData.waterLevel > 8 ? '<span>💧</span>' : ''}</p>
           <p><strong>Raining Status:</strong> ${
         latestData.rainingStatus === 1 ? "Raining" : "No Rain"
           } <span>🌧️</span></p>

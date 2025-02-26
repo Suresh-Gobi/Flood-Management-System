@@ -26,6 +26,7 @@ const SignIn = () => {
 
       // Save token to localStorage
       localStorage.setItem("token", response.data.token);
+      localStorage.setItem("role", response.data.role);
 
       openNotification(
         "success",
@@ -35,7 +36,6 @@ const SignIn = () => {
 
       // Redirect to dashboard
       navigate("/dashboard");
-
     } catch (error) {
       console.error("Failed:", error.response?.data);
 
@@ -55,7 +55,12 @@ const SignIn = () => {
         title={<h1 className="text-2xl">Signin</h1>}
         className="w-full max-w-xl p-2 rounded-lg shadow-md"
       >
-        <Form name="signinForm" layout="vertical" onFinish={onFinish} autoComplete="off">
+        <Form
+          name="signinForm"
+          layout="vertical"
+          onFinish={onFinish}
+          autoComplete="off"
+        >
           <Form.Item
             label="Username"
             name="username"

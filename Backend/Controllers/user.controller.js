@@ -90,7 +90,7 @@ exports.signin = async (req, res) => {
       return res.status(400).json({ msg: "Invalid Credentials" });
     }
 
-    // Create and return JWT token
+    // Create JWT token (without role)
     const payload = { id: user.id };
 
     jwt.sign(
@@ -99,7 +99,7 @@ exports.signin = async (req, res) => {
       { expiresIn: "1h" },
       (err, token) => {
         if (err) throw err;
-        res.json({ token });
+        res.json({ token, role: user.role });
       }
     );
   } catch (err) {
@@ -107,6 +107,7 @@ exports.signin = async (req, res) => {
     res.status(500).send("Server error");
   }
 };
+
 
 exports.sendPasswordResetOTP = async (req, res) => {
   const { email } = req.body;

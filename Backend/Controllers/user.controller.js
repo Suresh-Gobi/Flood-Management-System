@@ -1,4 +1,5 @@
 const User = require("../Models/user.model");
+const mongoose = require("mongoose");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const nodemailer = require("nodemailer");
@@ -251,5 +252,28 @@ exports.updateUserRole = async (req, res) => {
   } catch (err) {
     console.error("Error updating user role:", err.message);
     res.status(500).send("Server error");
+  }
+};
+
+exports.deleteUser = async (req, res) => {
+  try {
+    const { userId } = req.params;
+    
+    console.log("Received request to delete user with ID:", userId);
+
+    if (!mongoose.Types.ObjectId.isValid(userId)) {
+      return res.status(400).json({ success: false, message: "Invalid user ID" });
+    }
+
+    const deletedUser = await User.findByIdAndDelete(userId);
+
+    if (!deletedUser) {
+      return res.status(404).json({ success: false, message: "User not found" });
+    }
+
+    res.json({ success: true, message: "User deleted successfully" });
+
+  } catch (error) {
+    res.status(500).json({ success: false, message: "Internal Server Error", error: error.message });
   }
 };

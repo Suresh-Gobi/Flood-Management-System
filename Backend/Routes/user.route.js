@@ -21,6 +21,8 @@ router.get("/user/getall",authMiddleware, authorize(["user"]), userController.ge
 
 router.put("/user/update-role", authMiddleware, userController.updateUserRole);
 
+router.delete("/user/admin/:userId",authMiddleware, userController.deleteUser);
+
 // router.get(
 //     "/loggedusers",
 //     authMiddleware,

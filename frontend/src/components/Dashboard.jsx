@@ -12,6 +12,7 @@ import { Layout, Menu, Breadcrumb, Button, theme } from "antd";
 import Profile from "../pages/Profile";
 import Device from "../pages/dashboard/device";
 import WeatherDashboard from "../pages/dashboard/weatherDashboard";
+import Usermanagement from "../pages/dashboard/usermanagement";
 
 
 const { Header, Sider, Content, Footer } = Layout;
@@ -19,11 +20,11 @@ const { Header, Sider, Content, Footer } = Layout;
 const getItem = (label, key, icon) => ({ key, icon, label });
 
 const items = [
-  getItem("Weather", "weather", <PieChartOutlined />),
-  getItem("Devices", "devices", <ProjectOutlined />),
-  getItem("Chat", "chat", <MessageOutlined />),
-  getItem("Payment", "payment", <CreditCardOutlined />),
-  getItem("Profile", "profile", <UserOutlined />),
+  getItem("Weather Dashboard", "weather", <PieChartOutlined />),
+  getItem("Device Managment", "devices", <ProjectOutlined />),
+  getItem("User Management", "user", <UserOutlined />),
+  // getItem("Payment", "payment", <CreditCardOutlined />),
+  getItem("My Profile", "profile", <UserOutlined />),
 ];
 
 const App = () => {
@@ -56,8 +57,8 @@ const App = () => {
           <div style={{ padding: 24, minHeight: 360, background: colorBgContainer, borderRadius: borderRadiusLG }}>
             {selectedKey === "weather" && <WeatherDashboard/>}
             {selectedKey === "devices" && <Device/>}
-            {selectedKey === "chat" && <div>Chat Content</div>}
-            {selectedKey === "payment" && <div>Payment Content</div>}
+            {selectedKey === "user" && <Usermanagement/>}
+            {/* {selectedKey === "payment" && <div>Payment Content</div>} */}
             {selectedKey === "profile" && <Profile/>}
           </div>
         </Content>

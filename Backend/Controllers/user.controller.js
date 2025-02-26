@@ -223,3 +223,33 @@ exports.updateUserDetails = async (req, res) => {
     res.status(500).send("Server error");
   }
 };
+
+exports.getAllUsers = async (req, res) => {
+  try {
+    let users = await User.find().select("-password -resetPasswordOTP -resetPasswordExpires");
+    res.json(users);
+  } catch (err) {
+    console.error("Error fetching all users:", err.message);
+    res.status(500).send("Server error");
+  }
+};
+
+exports.updateUserRole = async (req, res) => {
+  const { userId, role } = req.body;
+
+  try {
+    let user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ msg: "User not found" });
+    }
+
+    user.role = role;
+
+    await user.save();
+
+    res.json({ msg: "User role updated successfully", user });
+  } catch (err) {
+    console.error("Error updating user role:", err.message);
+    res.status(500).send("Server error");
+  }
+};

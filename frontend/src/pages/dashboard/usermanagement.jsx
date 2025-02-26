@@ -3,6 +3,7 @@ import { Card, Row, Col, Spin, message, Button, Typography, Space } from "antd";
 import { EyeOutlined, EditOutlined, DeleteOutlined } from "@ant-design/icons";
 import axios from "axios";
 import ViewUserModal from "../models/ViewUserModel";
+import UpdateUserRoleModal from "../models/UpdateUserRoleModel";
 
 const { Text } = Typography;
 
@@ -10,7 +11,8 @@ export default function UserManagement() {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedUser, setSelectedUser] = useState(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isViewModalOpen, setIsViewModalOpen] = useState(false);
+  const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
 
   useEffect(() => {
     fetchUsers();
@@ -33,17 +35,12 @@ export default function UserManagement() {
 
   const handleView = (user) => {
     setSelectedUser(user);
-    setIsModalOpen(true);
-  };
-
-  const handleCloseModal = () => {
-    setIsModalOpen(false);
-    setSelectedUser(null);
+    setIsViewModalOpen(true);
   };
 
   const handleEdit = (user) => {
-    message.success(`Editing user: ${user.username}`);
-    // Implement update logic here
+    setSelectedUser(user);
+    setIsUpdateModalOpen(true);
   };
 
   const handleDelete = async (userId) => {
@@ -58,6 +55,10 @@ export default function UserManagement() {
     } catch (error) {
       message.error(error.response?.data?.message || "Failed to delete user.");
     }
+  };
+
+  const handleUpdateSuccess = (userId, newRole) => {
+    setUsers(users.map((user) => (user._id === userId ? { ...user, role: newRole } : user)));
   };
 
   return (
@@ -75,7 +76,6 @@ export default function UserManagement() {
                 <p><Text strong>Role:</Text> {user.role}</p>
                 <p><Text strong>Phone:</Text> {user.phone_number || "N/A"}</p>
 
-                {/* Buttons in horizontal row */}
                 <Space style={{ marginTop: "10px", display: "flex", justifyContent: "center" }}>
                   <Button icon={<EyeOutlined />} onClick={() => handleView(user)}></Button>
                   <Button icon={<EditOutlined />} type="primary" onClick={() => handleEdit(user)}>Update</Button>
@@ -88,7 +88,17 @@ export default function UserManagement() {
       )}
 
       {/* View User Modal */}
-      <ViewUserModal visible={isModalOpen} onClose={handleCloseModal} user={selectedUser} />
+      <ViewUserModal visible={isViewModalOpen} onClose={() => setIsViewModalOpen(false)} user={selectedUser} />
+
+      {/* Update Role Modal */}
+      {selectedUser && (
+        <UpdateUserRoleModal
+          visible={isUpdateModalOpen}
+          onClose={() => setIsUpdateModalOpen(false)}
+          user={selectedUser}
+          onUpdateSuccess={handleUpdateSuccess}
+        />
+      )}
     </div>
   );
 }

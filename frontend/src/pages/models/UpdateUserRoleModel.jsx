@@ -24,7 +24,7 @@ export default function UpdateUserRoleModal({ visible, onClose, user, onUpdateSu
       );
 
       message.success("User role updated successfully");
-      onUpdateSuccess(user._id, newRole); // Update role in UI
+      onUpdateSuccess(user._id, newRole);
       onClose();
     } catch (error) {
       message.error(error.response?.data?.message || "Failed to update role.");

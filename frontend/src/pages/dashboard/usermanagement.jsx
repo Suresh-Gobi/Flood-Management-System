@@ -63,7 +63,13 @@ export default function UserManagement() {
 
   return (
     <div style={{ padding: "20px" }}>
-      <h2>User Management</h2>
+      <div>
+          <h1 className="text-xl font-bold">User Management</h1>
+          <p className="text-sm text-gray-500">
+            Restricted to users.
+          </p>
+          <br/>
+        </div>
 
       {loading ? (
         <Spin size="large" style={{ display: "block", margin: "50px auto" }} />

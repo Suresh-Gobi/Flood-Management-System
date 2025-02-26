@@ -19,9 +19,9 @@ router.get("/user/get", authMiddleware, userController.getUserDetails);
 
 router.get("/user/getall",authMiddleware, authorize(["admin"]), userController.getAllUsers);
 
-router.put("/user/update-role", authMiddleware, userController.updateUserRole);
+router.put("/user/update-role", authMiddleware,  authorize(["admin"]), userController.updateUserRole);
 
-router.delete("/user/admin/:userId",authMiddleware, userController.deleteUser);
+router.delete("/user/admin/:userId",authMiddleware,  authorize(["admin"]), userController.deleteUser);
 
 // router.get(
 //     "/loggedusers",

@@ -7,16 +7,22 @@ export default function ConfigureDeviceModal({ visible, onClose }) {
 
     const handleSubmit = async (values) => {
         try {
+            const token = localStorage.getItem("token");
+            if (!token) {
+                throw new Error("Authentication token is missing");
+            }
             const { deviceName, thingSpeakChannelId, latitude, longitude } = values;
 
             const newDevice = {
                 name: deviceName,
                 thingSpeakChannelId,
-                latitude: parseFloat(latitude),  // 🔥 Send latitude & longitude as top-level fields
+                latitude: parseFloat(latitude),
                 longitude: parseFloat(longitude),
             };
 
-            const response = await axios.post("/api/device/add-device", newDevice);
+            const response = await axios.post("/api/device/add-device", newDevice, {
+                headers: { Authorization: `Bearer ${token}` },
+            });
 
             if (response.status === 201) {
                 message.success("Device added successfully!");

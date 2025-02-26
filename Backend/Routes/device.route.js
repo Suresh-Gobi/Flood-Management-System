@@ -19,6 +19,8 @@ const {
   updateDeviceById,
   deleteDeviceById,
 } = require("../Controllers/device.controller");
+const authMiddleware = require("../Utils/auth");
+const authorize = require("../Utils/roleauth");
 
 const router = express.Router();
 
@@ -38,12 +40,12 @@ router.get("/rain", getSensorData);
 router.get("/rain/:field", rainGetDeviceData);
 router.get("/rain-channel-status", getChannelInfo);
 
-router.post("/add-device", addDevice);
+router.post("/add-device",authMiddleware, authorize(["admin"]), addDevice);
 
-router.get("/getall-device", getAllDevices);
+router.get("/getall-device",authMiddleware, authorize(["admin"]), getAllDevices);
 
 router.put("/update-device/:id", updateDeviceById);
 
-router.delete("/delete-device/:id", deleteDeviceById);
+router.delete("/delete-device/:id",authMiddleware, authorize(["admin"]), deleteDeviceById);
 
 module.exports = router;

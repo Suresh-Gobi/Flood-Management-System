@@ -14,7 +14,13 @@ export default function Device() {
   const fetchDevices = async () => {
     setLoading(true);
     try {
-      const response = await axios.get("/api/device/getall-device");
+      const token = localStorage.getItem("token");
+      if (!token) {
+          throw new Error("Authentication token is missing");
+      }
+      const response = await axios.get("/api/device/getall-device", {
+        headers: { Authorization: `Bearer ${token}` },
+    });
       console.log("API Response:", response.data);
 
       if (Array.isArray(response.data.data)) {
@@ -56,13 +62,19 @@ export default function Device() {
 
   const handleRemoveDevice = async (device) => {
     try {
+      const token = localStorage.getItem("token");
+            if (!token) {
+                throw new Error("Authentication token is missing");
+            }
       const response = await axios.delete(
-        `/api/device/delete-device/${device._id}`
+        `/api/device/delete-device/${device._id}`,{
+          headers: { Authorization: `Bearer ${token}` },
+      }
       );
 
       if (response.data.success) {
         message.success("Device deleted successfully");
-        fetchDevices(); // Refresh the device list after deletion
+        fetchDevices();
       } else {
         message.error(response.data.message);
       }

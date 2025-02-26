@@ -30,7 +30,7 @@ router.get("/flood/:field", getFieldData);
 
 router.get("/flood-channel-status", getChannelStatus);
 
-router.get("/get-thinkspeakdata", getThingSpeakDataDirect);
+router.get("/get-thinkspeakdata",authMiddleware, authorize(["admin","user"]), getThingSpeakDataDirect);
 
 router.get("/get-thinkspeakdatabyid/:deviceId", getAllThingSpeakDataByID);
 

@@ -14,7 +14,13 @@ export default function WeatherDashboard() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get("/api/device/get-thinkspeakdata");
+        const token = localStorage.getItem("token");
+        if (!token) {
+            throw new Error("Authentication token is missing");
+        }
+        const response = await axios.get("/api/device/get-thinkspeakdata", {
+          headers: { Authorization: `Bearer ${token}` },
+      });
         if (response.data.success) {
           setDevices(response.data.devices);
         } else {

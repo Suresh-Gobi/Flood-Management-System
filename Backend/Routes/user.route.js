@@ -23,11 +23,5 @@ router.put("/user/update-role", authMiddleware,  authorize(["admin"]), userContr
 
 router.delete("/user/admin/:userId",authMiddleware,  authorize(["admin"]), userController.deleteUser);
 
-// router.get(
-//     "/loggedusers",
-//     authMiddleware,
-//     authorize(["user"]),
-//     userController.getLoggedUserDetails
-//   );
 
 module.exports = router;

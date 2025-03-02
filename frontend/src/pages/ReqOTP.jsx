@@ -27,7 +27,7 @@ export default function ReqOTP() {
                 response.data.message || "OTP has been sent to your email."
             );
 
-            // Save email to local storage
+            
             localStorage.setItem("email", values.email);
         } catch (error) {
             console.error("Error:");

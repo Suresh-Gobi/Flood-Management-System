@@ -22,8 +22,8 @@ exports.signup = async (req, res) => {
     province,
     district,
     country,
-    latitude = null, // Default value
-    longitude = null, // Default value
+    latitude = null,
+    longitude = null,
 
   } = req.body;
 
@@ -126,7 +126,7 @@ exports.sendPasswordResetOTP = async (req, res) => {
     }
 
     // Generate OTP
-    const otp = Math.floor(100000 + Math.random() * 900000); // Generates a 6-digit OTP
+    const otp = Math.floor(100000 + Math.random() * 900000); 
 
     // Save OTP to database
     user.resetPasswordOTP = otp;

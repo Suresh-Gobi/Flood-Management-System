@@ -18,7 +18,7 @@ const sendVerificationEmail = (email, alert) => {
     const mailOptions = {
         from: "sureshgobi34@gmail.com",
         to: email,
-        subject: "Email Verification",
+        subject: "ALerts",
         text: `Your alert code is: ${alert}`,
         html: `
             <div style="font-family: Arial, sans-serif; background-color: #f4f4f4; text-align: center; padding: 20px;">

@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { FaUserCircle } from "react-icons/fa"; // Import an icon from react-icons
+import { FaUserCircle } from "react-icons/fa";
 
 export default function Header() {
   const navigate = useNavigate();

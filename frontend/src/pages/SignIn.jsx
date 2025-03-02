@@ -24,7 +24,7 @@ const SignIn = () => {
 
       console.log("Success:", response.data);
 
-      // Save token to localStorage
+      
       localStorage.setItem("token", response.data.token);
       localStorage.setItem("role", response.data.role);
 
@@ -34,7 +34,7 @@ const SignIn = () => {
         "You have successfully signed in!"
       );
 
-      // Redirect to dashboard
+      
       navigate("/dashboard");
     } catch (error) {
       console.error("Failed:", error.response?.data);

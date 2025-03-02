@@ -1,6 +1,6 @@
-const Device = require("../Models/device.model"); // Import your Mongoose model
+const Device = require("../Models/device.model"); 
 
-// ✅ Add a new device
+// Add a new device
 const addDevice = async (req, res) => {
   try {
     const { name, thingSpeakChannelId, latitude, longitude } = req.body;
@@ -34,7 +34,7 @@ const addDevice = async (req, res) => {
   }
 };
 
-// ✅ Get device by ID
+// Get device by ID
 const getAllDevices = async (req, res) => {
   try {
     // Find all devices
@@ -53,7 +53,7 @@ const getAllDevices = async (req, res) => {
   }
 };
 
-// ✅ Update device by ID
+// Update device by ID
 const updateDeviceById = async (req, res) => {
   try {
       const { id } = req.params;
@@ -80,7 +80,7 @@ const updateDeviceById = async (req, res) => {
   }
 };
 
-// ✅ Delete device by ID
+// Delete device by ID
 const deleteDeviceById = async (req, res) => {
   try {
     const { id } = req.params;

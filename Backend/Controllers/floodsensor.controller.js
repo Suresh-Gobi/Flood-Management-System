@@ -5,7 +5,7 @@ const ThingSpeakData = require("../Models/ThingSpeakData");
 const API_KEY = "Z5OGMVIFH683U3V1";
 const BASE_URL = "https://api.thingspeak.com/channels";
 
-// ✅ Get all data for a specific device
+// Get all data for a specific device
 const getDeviceData = async () => {
   try {
     console.log("Fetching devices from MongoDB...");
@@ -78,7 +78,7 @@ const getDeviceData = async () => {
 setInterval(getDeviceData, 20000);
 
 
-// ✅ Get specific field data (e.g., water level) for a device
+// Get specific field data (e.g., water level) for a device
 const getFieldData = async (req, res) => {
   try {
     const { deviceId, field } = req.params;
@@ -113,7 +113,7 @@ const getFieldData = async (req, res) => {
   }
 };
 
-// ✅ Get the status of a specific device's channel
+// Get the status of a specific device's channel
 const getChannelStatus = async (req, res) => {
   try {
     const { deviceId } = req.params;
@@ -147,7 +147,7 @@ const getChannelStatus = async (req, res) => {
   }
 };
 
-// ✅ Get ThingSpeak data directly from ThingSpeak channel
+// Get ThingSpeak data directly from ThingSpeak channel
 const getThingSpeakDataDirect = async (req, res) => {
   try {
     console.log("Fetching devices from MongoDB...");
@@ -266,7 +266,7 @@ const startDeviceDataUpdates = (io) => {
             };
           }
 
-          const latestEntry = feeds[feeds.length - 1]; // Get the most recent entry
+          const latestEntry = feeds[feeds.length - 1];
 
           return {
             deviceId: device._id,
@@ -316,7 +316,7 @@ const startDeviceDataUpdates = (io) => {
 
 
 
-// ✅ Get all ThingSpeak data
+// Get all ThingSpeak data
 const getAllThingSpeakDataByID = async (req, res) => {
   try {
     const { deviceId } = req.params;

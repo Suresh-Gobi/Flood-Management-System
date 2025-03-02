@@ -65,7 +65,6 @@ const GoogleMapComponent = () => {
     const updateMarkers = async () => {
       const { AdvancedMarkerElement } = await google.maps.importLibrary("marker");
 
-      // Clear existing markers
       markersRef.current.forEach(marker => marker.setMap(null));
       markersRef.current = [];
 
@@ -146,9 +145,8 @@ const GoogleMapComponent = () => {
       id="map"
       style={{
         height: "100vh",
-        width: "80%",
-        marginTop: "50px",
-        marginLeft: "300px",
+        width: "100%",
+
       }}
     ></div>
   );

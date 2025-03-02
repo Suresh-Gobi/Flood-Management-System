@@ -44,7 +44,7 @@ io.on("connection", (socket) => {
 // Start real-time updates
 startDeviceDataUpdates(io);
 
-checkLatestData(); 
+// checkLatestData(); 
 
 // Start server
 const PORT = process.env.PORT || 5000;

@@ -6,6 +6,7 @@ import { Line } from "react-chartjs-2";
 import "chart.js/auto";
 import LiquidFillGauge from "react-liquid-gauge";
 import Thermometer from "react-thermometer-component";
+import { CloudRain, Sun } from "lucide-react";
 
 export default function WeatherCalculationModel({ device, onClose }) {
   const [thinkSpeakData, setThinkSpeakData] = useState(null);
@@ -18,7 +19,7 @@ export default function WeatherCalculationModel({ device, onClose }) {
   const center =
     device?.latitude && device?.longitude
       ? { lat: parseFloat(device.latitude), lng: parseFloat(device.longitude) }
-      : { lat: 0, lng: 0 }; // Default to (0,0) to prevent errors
+      : { lat: 0, lng: 0 };
 
   useEffect(() => {
     if (!device) return;
@@ -36,6 +37,8 @@ export default function WeatherCalculationModel({ device, onClose }) {
     };
 
     fetchThinkSpeakData();
+    const interval = setInterval(fetchThinkSpeakData, 2000);
+    return () => clearInterval(interval);
   }, [device]);
 
   useEffect(() => {
@@ -96,13 +99,16 @@ export default function WeatherCalculationModel({ device, onClose }) {
     doc.text("Weather Report", 80, 10);
     doc.setFontSize(12);
 
-    // Device details
     doc.text(`Device Name: ${device?.name || "N/A"}`, 10, 30);
     doc.text(`Location: ${device?.latitude}, ${device?.longitude}`, 10, 40);
     doc.text(`Water Level: ${device?.latestData?.waterLevel || 0}m`, 10, 50);
     doc.text(`Temperature: ${device?.latestData?.temperature || 0}°C`, 10, 60);
     doc.text(`Rainfall: ${device?.latestData?.rainfall || 0}mm`, 10, 70);
-    doc.text(`Air Pressure: ${device?.latestData?.airPressure || 0} hPa`, 10, 80);
+    doc.text(
+      `Air Pressure: ${device?.latestData?.airPressure || 0} hPa`,
+      10,
+      80
+    );
 
     doc.save(`Weather_Report_${device?.name || "Device"}.pdf`);
   };
@@ -152,14 +158,12 @@ export default function WeatherCalculationModel({ device, onClose }) {
           />
         </div>
         <div style={{ textAlign: "center" }}>
-          <h3>Raining Meter</h3>
-          <LiquidFillGauge
-            width={150}
-            height={150}
-            value={device?.latestData?.rainfall || 0}
-            riseAnimation
-            waveAnimation
-          />
+          <h3>Weather Status</h3>
+          {device?.latestData?.rainfall === 1 ? (
+            <CloudRain size={150} color="blue" />
+          ) : (
+            <Sun size={150} color="orange" />
+          )}
         </div>
         <div style={{ textAlign: "center" }}>
           <h3>Air Pressure</h3>
@@ -229,7 +233,6 @@ export default function WeatherCalculationModel({ device, onClose }) {
                     <pre>{JSON.stringify(thinkSpeakData, null, 2)}</pre>
                 </div>
             )} */}
-
     </Modal>
   );
 }

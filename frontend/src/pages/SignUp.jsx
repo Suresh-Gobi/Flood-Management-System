@@ -1,20 +1,47 @@
-import React, { useState } from "react";
-import { Button, Card, Form, Input, Typography, notification, Steps, DatePicker } from "antd";
+import React, { useState, useEffect } from "react";
+import { Button, Card, Form, Input, Typography, notification, DatePicker } from "antd";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
 const { Text } = Typography;
-const { Step } = Steps;
 
 const SignUp = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [currentStep, setCurrentStep] = useState(0);
   const [formValues, setFormValues] = useState({});
+  const [location, setLocation] = useState({ latitude: "", longitude: "" });
+
+  useEffect(() => {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          setLocation({
+            latitude: position.coords.latitude,
+            longitude: position.coords.longitude,
+          });
+        },
+        (error) => {
+          console.error("Error getting location:", error);
+          notification.warning({
+            message: "Location Access Denied",
+            description: "Please enable location access for better experience.",
+          });
+        }
+      );
+    } else {
+      console.error("Geolocation is not supported by this browser.");
+    }
+  }, []);
 
   const openNotification = (type, message, description) => {
     notification[type]({ message, description });
   };
+
+  const handleLocationChange = (e) => {
+    setLocation({ ...location, [e.target.name]: e.target.value });
+  };
+
 
   const nextStep = (values) => {
     setFormValues({ ...formValues, ...values });
@@ -26,7 +53,13 @@ const SignUp = () => {
   };
 
   const onFinish = async (values) => {
-    const finalValues = { ...formValues, ...values };
+    const finalValues = {
+      ...formValues,
+      ...values,
+      longitude: location.longitude,
+      latitude: location.latitude,
+    };
+
     try {
       setLoading(true);
       const response = await axios.post("api/signup", finalValues);
@@ -46,7 +79,7 @@ const SignUp = () => {
       <Card title={<h1 className="text-xl font-semibold text-center">Signup</h1>} className="w-full max-w-3xl p-4 rounded-lg shadow-lg">
         {currentStep === 0 && (
           <Form onFinish={nextStep} autoComplete="off" layout="vertical">
-            <div className="grid grid-cols-1 ">
+            <div className="grid grid-cols-1">
               <Form.Item label="Username" name="username" rules={[{ required: true, message: "Please input your username!" }]}>
                 <Input />
               </Form.Item>
@@ -74,7 +107,7 @@ const SignUp = () => {
                 <Input />
               </Form.Item>
               <Form.Item label="Date of Birth" name="date_of_birth" rules={[{ required: true, message: "Please enter your date of birth!" }]}>
-                <DatePicker style={{ width: '100%' }} />
+                <DatePicker style={{ width: "100%" }} />
               </Form.Item>
               <Form.Item label="Address" name="address" rules={[{ required: true, message: "Please enter your address!" }]}>
                 <Input />
@@ -97,6 +130,12 @@ const SignUp = () => {
               <Form.Item label="Country" name="country" rules={[{ required: true, message: "Please enter your country!" }]}>
                 <Input />
               </Form.Item>
+              <Form.Item label="Latitude" required>
+              <Input name="latitude" value={location.latitude} onChange={handleLocationChange} />
+            </Form.Item>
+            <Form.Item label="Longitude" required>
+              <Input name="longitude" value={location.longitude} onChange={handleLocationChange} />
+            </Form.Item>
             </div>
             <div className="flex justify-between">
               <Button onClick={prevStep} className="mr-2">Back</Button>

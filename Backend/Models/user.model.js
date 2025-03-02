@@ -17,8 +17,8 @@ const UserSchema = new Schema({
   resetPasswordOTP: { type: String, required: false },
   resetPasswordExpires: { type: Date, required: false },
   createdAt: { type: Date, default: Date.now },
-  longitude: { type: Number, default: null },
   latitude: { type: Number, default: null },
+  longitude: { type: Number, default: null },
   street1: { type: String, default: null },
   street2: { type: String, default: null },
   city: { type: String, default: null },
@@ -30,7 +30,7 @@ const UserSchema = new Schema({
 
 const User = mongoose.model("User", UserSchema);
 
-// Function to create default admin
+
 async function createDefaultAdmin() {
   const existingAdmin = await User.findOne({ role: "admin" });
 

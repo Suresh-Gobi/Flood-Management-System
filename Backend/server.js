@@ -9,6 +9,8 @@ const { Server } = require("socket.io");
 
 const { startDeviceDataUpdates } = require("./Controllers/floodsensor.controller");
 
+const {checkLatestData} = require("./Controllers/disasteralert.controller");
+
 // Initialize Express app
 const app = express();
 const server = http.createServer(app);
@@ -41,6 +43,8 @@ io.on("connection", (socket) => {
 
 // Start real-time updates
 startDeviceDataUpdates(io);
+
+checkLatestData(); 
 
 // Start server
 const PORT = process.env.PORT || 5000;

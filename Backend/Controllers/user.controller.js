@@ -22,6 +22,9 @@ exports.signup = async (req, res) => {
     province,
     district,
     country,
+    latitude = null, // Default value
+    longitude = null, // Default value
+
   } = req.body;
 
   try {
@@ -47,6 +50,9 @@ exports.signup = async (req, res) => {
       province,
       district,
       country,
+      latitude: latitude ? parseFloat(latitude) : null,
+      longitude: longitude ? parseFloat(longitude) : null,
+
     });
 
     // Hash password
@@ -73,6 +79,7 @@ exports.signup = async (req, res) => {
     res.status(500).send("Server error");
   }
 };
+
 
 exports.signin = async (req, res) => {
   const { username, password } = req.body;

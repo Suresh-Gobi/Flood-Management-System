@@ -104,7 +104,7 @@ const checkLatestData = async () => {
       if (nearbyUsers.length > 0) {
         // console.log(`Sending alerts to ${nearbyUsers.length} users nearby...`);
         nearbyUsers.forEach((user) => {
-          sendVerificationEmail(user.email, alertMessage);
+          // sendVerificationEmail(user.email, alertMessage);
         });
       } else {
         console.log("No users found within 10km radius.");

@@ -118,7 +118,7 @@ const GoogleMapComponent = () => {
           <div class="card-body">
             <hr/>
             <p><strong>Water Level:</strong> ${latestData.waterLevel || "N/A"} ${latestData.waterLevel > 8 ? '<span>💧</span>' : ''}</p>
-            <p><strong>Raining Status:</strong> ${latestData.rainingStatus === 1 ? "Raining" : "No Rain"} <span>🌧️</span></p>
+            <p><strong>Raining Status:</strong> ${latestData.rainingStatus === '1' ? "Raining" : "No Rain"} <span>🌧️</span></p>
             <p><strong>Temperature:</strong> ${latestData.temperature || "N/A"} <span>🌡️</span></p>
             <p><strong>Air Pressure:</strong> ${latestData.airPressure || "N/A"} <span>🌬️</span></p>
             <p><strong>Waterfall Level:</strong> ${latestData.waterfallLevel || "N/A"} <span>🌊</span></p>

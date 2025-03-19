@@ -104,6 +104,7 @@ export default function WeatherCalculationModel({ device, onClose }) {
     doc.text(`Water Level: ${device?.latestData?.waterLevel || 0}m`, 10, 50);
     doc.text(`Temperature: ${device?.latestData?.temperature || 0}°C`, 10, 60);
     doc.text(`Rainfall: ${device?.latestData?.rainfall || 0}mm`, 10, 70);
+    
     doc.text(
       `Air Pressure: ${device?.latestData?.airPressure || 0} hPa`,
       10,
@@ -159,7 +160,7 @@ export default function WeatherCalculationModel({ device, onClose }) {
         </div>
         <div style={{ textAlign: "center" }}>
           <h3>Weather Status</h3>
-          {device?.latestData?.rainfall === 1 ? (
+          {device?.latestData?.rainfall == '1' ? (
             <CloudRain size={150} color="blue" />
           ) : (
             <Sun size={150} color="orange" />
@@ -227,12 +228,12 @@ export default function WeatherCalculationModel({ device, onClose }) {
         </div>
       </div>
 
-      {/* {thinkSpeakData && (
+      {thinkSpeakData && (
                 <div style={{ marginTop: "20px", padding: "10px", background: "#f9f9f9", borderRadius: "5px" }}>
                     <h3>ThinkSpeak Data</h3>
                     <pre>{JSON.stringify(thinkSpeakData, null, 2)}</pre>
                 </div>
-            )} */}
+            )}
     </Modal>
   );
 }

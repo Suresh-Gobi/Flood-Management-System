@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { Card, Spin, Typography, Row, Col, Modal, Button } from "antd";
+import { Droplet, CloudRain, Thermometer, BarChart } from "lucide-react";
 import WeatherCalculationModel from "../models/WeatherCalculationModel";
 
 const { Title, Text } = Typography;
@@ -53,13 +54,29 @@ export default function WeatherDashboard() {
       <Row gutter={[16, 16]} style={{ padding: "20px" }}>
         {devices.map((device) => (
           <Col xs={24} sm={12} md={8} key={device.deviceId}>
-            <Card hoverable title={<Title level={4}>{device.name}</Title>} onClick={() => setSelectedDevice(device)}>
+            <Card
+              hoverable
+              title={<Title level={4} style={{ color: "white" }}>{device.name}</Title>}
+              onClick={() => setSelectedDevice(device)}
+              style={{ backgroundColor: "#007BFF", color: "white" }}
+            >
               {device.latestData ? (
-                <Text>
-                  Water Level: {device.latestData.waterLevel}m | Raining: {device.latestData.rainingStatus} | Temperature: {device.latestData.temperature}°C | Air Pressure: {device.latestData.airPressure}hPa
-                </Text>
+                <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+                  <Text style={{ color: "white", fontWeight: "bold", fontSize: "28px" }}>
+                    <Droplet size={18} style={{ marginRight: "8px" }} /> {device.latestData.waterLevel}m
+                  </Text>
+                  <Text style={{ color: "white", fontWeight: "bold", fontSize: "28px" }}>
+                    <CloudRain size={18} style={{ marginRight: "8px" }} /> {device.latestData.rainingStatus === 1 ? "Raining" : "No Rain"}
+                  </Text>
+                  <Text style={{ color: "white", fontWeight: "bold", fontSize: "28px" }}>
+                    <Thermometer size={18} style={{ marginRight: "8px" }} /> {device.latestData.temperature}°C
+                  </Text>
+                  <Text style={{ color: "white", fontWeight: "bold", fontSize: "28px" }}>
+                    <BarChart size={18} style={{ marginRight: "8px" }} /> {device.latestData.airPressure}hPa
+                  </Text>
+                </div>
               ) : (
-                <Text type="secondary">No recent data available</Text>
+                <Text type="secondary" style={{ color: "white" }}>No recent data available</Text>
               )}
             </Card>
           </Col>

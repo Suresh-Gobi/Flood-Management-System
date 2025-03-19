@@ -84,7 +84,7 @@ export default function UserManagement() {
 
                 <Space style={{ marginTop: "10px", display: "flex", justifyContent: "center" }}>
                   <Button icon={<EyeOutlined />} onClick={() => handleView(user)}></Button>
-                  <Button icon={<EditOutlined />} type="primary" onClick={() => handleEdit(user)}>Update</Button>
+                  <Button icon={<EditOutlined />} type="default" onClick={() => handleEdit(user)}>Update</Button>
                   <Button icon={<DeleteOutlined />} danger onClick={() => handleDelete(user._id)}></Button>
                 </Space>
               </Card>

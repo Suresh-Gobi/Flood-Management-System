@@ -10,6 +10,7 @@ import { CloudRain, Sun } from "lucide-react";
 
 export default function WeatherCalculationModel({ device, onClose }) {
   const [thinkSpeakData, setThinkSpeakData] = useState(null);
+  const [waterfallData, setWaterfallData] = useState([]);
 
   const mapContainerStyle = {
     width: "100%",
@@ -80,18 +81,55 @@ export default function WeatherCalculationModel({ device, onClose }) {
 
     loadGoogleMaps();
   }, [device]);
+  useEffect(() => {
+    if (!device) return;
 
-  const createChartData = (label, data, color) => ({
-    labels: thinkSpeakData?.data.map((_, index) => `Entry ${index + 1}`).reverse() || [],
-    datasets: [
-      {
-        label,
-        data: thinkSpeakData?.data.map((entry) => entry[data]).reverse() || [],
-        borderColor: color,
-        fill: false,
-      },
-    ],
-  });
+    const fetchWaterfallData = async () => {
+      try {
+        const response = await fetch(
+          `https://api.openweathermap.org/data/2.5/weather?lat=${device.latitude}&lon=${device.longitude}&appid=7fb9f37723118b83f06276e2f3e96221&units=metric`
+        );
+        const data = await response.json();
+        console.log("Weather Data:", data);
+
+        if (data.rain && data.rain["1h"]) {
+          setWaterfallData((prev) => [...prev, data.rain["1h"]]); // Rainfall in the past hour
+        } else {
+          setWaterfallData((prev) => [...prev, 0]); // No rainfall
+        }
+      } catch (error) {
+        console.error("Error fetching waterfall data:", error);
+      }
+    };
+
+    fetchWaterfallData();
+    const interval = setInterval(fetchWaterfallData, 60000);
+    return () => clearInterval(interval);
+  }, [device]);
+
+  const createChartData = (label, data, color) => {
+    const thinkSpeakEntries = thinkSpeakData?.data || [];
+    const waterfallEntries = waterfallData || [];
+  
+    const maxLength = Math.max(thinkSpeakEntries.length, waterfallEntries.length);
+  
+    return {
+      labels: Array.from({ length: maxLength }, (_, index) => `Entry ${index + 1}`).reverse(),
+      datasets: [
+        {
+          label: `ThinkSpeak ${label}`,
+          data: thinkSpeakEntries.map((entry) => entry[data]).reverse(),
+          borderColor: color,
+          fill: false,
+        },
+        {
+          data: waterfallEntries.reverse(),
+          borderColor: "rgba(255, 159, 64, 1)",
+          fill: false,
+        },
+      ],
+    };
+  };
   
 
   const generatePDF = () => {
@@ -105,7 +143,7 @@ export default function WeatherCalculationModel({ device, onClose }) {
     doc.text(`Water Level: ${device?.latestData?.waterLevel || 0}m`, 10, 50);
     doc.text(`Temperature: ${device?.latestData?.temperature || 0}°C`, 10, 60);
     doc.text(`Rainfall: ${device?.latestData?.rainfall || 0}mm`, 10, 70);
-    
+
     doc.text(
       `Air Pressure: ${device?.latestData?.airPressure || 0} hPa`,
       10,
@@ -148,25 +186,33 @@ export default function WeatherCalculationModel({ device, onClose }) {
             waveAnimation
           />
         </div>
-        <div style={{ textAlign: "center" }}>
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            flexDirection: "column",
+          }}
+        >
           <h3>Temperature</h3>
           <Thermometer
             theme="light"
             value={device?.latestData?.temperature || 0}
             max={50}
-            steps={5}
             format="°C"
             height={200}
           />
         </div>
+
         <div style={{ textAlign: "center" }}>
           <h3>Weather Status</h3>
-          {device?.latestData?.rainfall == '1' ? (
+          {parseInt(device?.latestData?.rainfall, 10) === 1 ? (
             <CloudRain size={150} color="blue" />
           ) : (
             <Sun size={150} color="orange" />
           )}
         </div>
+
         <div style={{ textAlign: "center" }}>
           <h3>Air Pressure</h3>
           <LiquidFillGauge
@@ -222,7 +268,7 @@ export default function WeatherCalculationModel({ device, onClose }) {
           <Line
             data={createChartData(
               "Waterfall Level",
-              "waterfallLevel",
+              "rainfall",
               "rgba(255, 206, 86, 1)"
             )}
           />
@@ -230,11 +276,18 @@ export default function WeatherCalculationModel({ device, onClose }) {
       </div>
 
       {thinkSpeakData && (
-                <div style={{ marginTop: "20px", padding: "10px", background: "#f9f9f9", borderRadius: "5px" }}>
-                    <h3>ThinkSpeak Data</h3>
-                    <pre>{JSON.stringify(thinkSpeakData, null, 2)}</pre>
-                </div>
-            )}
+        <div
+          style={{
+            marginTop: "20px",
+            padding: "10px",
+            background: "#f9f9f9",
+            borderRadius: "5px",
+          }}
+        >
+          <h3>ThinkSpeak Data</h3>
+          <pre>{JSON.stringify(thinkSpeakData, null, 2)}</pre>
+        </div>
+      )}
     </Modal>
   );
 }

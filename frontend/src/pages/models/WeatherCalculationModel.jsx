@@ -82,16 +82,17 @@ export default function WeatherCalculationModel({ device, onClose }) {
   }, [device]);
 
   const createChartData = (label, data, color) => ({
-    labels: thinkSpeakData?.data.map((_, index) => `Entry ${index + 1}`) || [],
+    labels: thinkSpeakData?.data.map((_, index) => `Entry ${index + 1}`).reverse() || [],
     datasets: [
       {
         label,
-        data: thinkSpeakData?.data.map((entry) => entry[data]) || [],
+        data: thinkSpeakData?.data.map((entry) => entry[data]).reverse() || [],
         borderColor: color,
         fill: false,
       },
     ],
   });
+  
 
   const generatePDF = () => {
     const doc = new jsPDF();

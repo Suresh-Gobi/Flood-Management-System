@@ -9,4 +9,5 @@ const DeviceSchema = new mongoose.Schema({
   },
 });
 
+
 module.exports = mongoose.model("Device", DeviceSchema);

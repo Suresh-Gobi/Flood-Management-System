@@ -3,6 +3,7 @@ const ThingSpeakData = require("../Models/ThingSpeakData");
 const Device = require("../Models/device.model");
 const User = require("../Models/user.model");
 const { sendVerificationEmail } = require("../utils/email-alert");
+const { sendSms } = require("../utils/smsService");
 
 const WATER_LEVEL_THRESHOLD = 0;
 const RAIN_THRESHOLD = 1;
@@ -102,9 +103,10 @@ const checkLatestData = async () => {
       const nearbyUsers = await getNearbyUsers({ latitude, longitude });
 
       if (nearbyUsers.length > 0) {
-        // console.log(`Sending alerts to ${nearbyUsers.length} users nearby...`);
+        console.log(`Sending alerts to ${nearbyUsers.length} users nearby...`);
         nearbyUsers.forEach((user) => {
           // sendVerificationEmail(user.email, alertMessage);
+          // sendSms(user.phone_number, alertMessage);
         });
       } else {
         console.log("No users found within 10km radius.");

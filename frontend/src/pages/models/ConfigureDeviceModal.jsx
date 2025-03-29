@@ -59,7 +59,7 @@ export default function ConfigureDeviceModal({ visible, onClose }) {
                 </Form.Item>
                 <div className="flex justify-end gap-2">
                     <Button onClick={onClose}>Cancel</Button>
-                    <Button type="primary" htmlType="submit">Save</Button>
+                    <Button type="default" htmlType="submit">Save</Button>
                 </div>
             </Form>
         </Modal>

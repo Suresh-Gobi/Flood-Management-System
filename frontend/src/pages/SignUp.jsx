@@ -75,8 +75,8 @@ const SignUp = () => {
   };
 
   return (
-    <div className="flex items-center justify-center h-screen bg-white-100">
-      <Card title={<h1 className="text-xl font-semibold text-center">Signup</h1>} className="w-full max-w-3xl p-4 rounded-lg shadow-lg">
+    <div className="flex items-center justify-center h-screen bg-white-100" style={{ backgroundImage: "url('https://uplink.weforum.org/uplink/sfc/servlet.shepherd/version/renditionDownload?rendition=ORIGINAL_jpg&versionId=068TE000007b39WYAQ')" }}>
+      <Card title={<h1 className="text-xl font-semibold text-center">Signup</h1>} className="w-full max-w-3xl p-4 rounded-lg shadow-lg bg-white bg-opacity-75">
         {currentStep === 0 && (
           <Form onFinish={nextStep} autoComplete="off" layout="vertical">
             <div className="grid grid-cols-1">

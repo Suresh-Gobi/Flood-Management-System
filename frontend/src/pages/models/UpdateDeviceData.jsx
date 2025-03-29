@@ -78,7 +78,7 @@ const UpdateDeviceData = ({ visible, onClose, device, refreshDevices }) => {
 
         <div className="flex justify-end gap-2">
           <Button onClick={onClose}>Cancel</Button>
-          <Button type="primary" htmlType="submit" loading={loading}>
+          <Button type="default" htmlType="submit" loading={loading}>
             Update Device
           </Button>
         </div>

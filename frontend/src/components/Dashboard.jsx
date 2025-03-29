@@ -36,7 +36,6 @@ const App = () => {
           getItem("Weather Dashboard", "weather", <PieChartOutlined />),
           getItem("Device Management", "devices", <ProjectOutlined />),
           getItem("User Management", "user", <UserOutlined />),
-          getItem("My Profile", "profile", <UserOutlined />),
         ];
 
   const {
@@ -92,7 +91,7 @@ const App = () => {
             {selectedKey === "weather" && <WeatherDashboard />}
             {selectedKey === "devices" && role !== "user" && <Device />}
             {selectedKey === "user" && role !== "user" && <Usermanagement />}
-            {selectedKey === "profile" && <Profile />}
+            {selectedKey === "profile" && role !== "admin" && <Profile />}
           </div>
         </Content>
       </Layout>

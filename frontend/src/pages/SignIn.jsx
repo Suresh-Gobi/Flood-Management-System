@@ -50,10 +50,10 @@ const SignIn = () => {
   };
 
   return (
-    <div className="flex items-center justify-center h-screen">
+    <div className="flex items-center justify-center h-screen" style={{ backgroundImage: "url('https://uplink.weforum.org/uplink/sfc/servlet.shepherd/version/renditionDownload?rendition=ORIGINAL_jpg&versionId=068TE000007b39WYAQ')" }}>
       <Card
         title={<h1 className="text-2xl">Signin</h1>}
-        className="w-full max-w-xl p-2 rounded-lg shadow-md"
+        className="w-full max-w-xl p-2 rounded-lg shadow-md bg-white bg-opacity-75"
       >
         <Form
           name="signinForm"

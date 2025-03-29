@@ -8,6 +8,7 @@ import LiquidFillGauge from "react-liquid-gauge";
 import Thermometer from "react-thermometer-component";
 import { CloudRain, Sun } from "lucide-react";
 
+
 export default function WeatherCalculationModel({ device, onClose }) {
   const [thinkSpeakData, setThinkSpeakData] = useState(null);
   const [waterfallData, setWaterfallData] = useState([]);
@@ -38,7 +39,7 @@ export default function WeatherCalculationModel({ device, onClose }) {
     };
 
     fetchThinkSpeakData();
-    const interval = setInterval(fetchThinkSpeakData, 2000);
+    const interval = setInterval(fetchThinkSpeakData, 1000);
     return () => clearInterval(interval);
   }, [device]);
 
@@ -93,9 +94,9 @@ export default function WeatherCalculationModel({ device, onClose }) {
         console.log("Weather Data:", data);
 
         if (data.rain && data.rain["1h"]) {
-          setWaterfallData((prev) => [...prev, data.rain["1h"]]); // Rainfall in the past hour
+          setWaterfallData((prev) => [...prev, data.rain["1h"]]);
         } else {
-          setWaterfallData((prev) => [...prev, 0]); // No rainfall
+          setWaterfallData((prev) => [...prev, 0]);
         }
       } catch (error) {
         console.error("Error fetching waterfall data:", error);
@@ -110,11 +111,17 @@ export default function WeatherCalculationModel({ device, onClose }) {
   const createChartData = (label, data, color) => {
     const thinkSpeakEntries = thinkSpeakData?.data || [];
     const waterfallEntries = waterfallData || [];
-  
-    const maxLength = Math.max(thinkSpeakEntries.length, waterfallEntries.length);
-  
+
+    const maxLength = Math.max(
+      thinkSpeakEntries.length,
+      waterfallEntries.length
+    );
+
     return {
-      labels: Array.from({ length: maxLength }, (_, index) => `Entry ${index + 1}`).reverse(),
+      labels: Array.from(
+        { length: maxLength },
+        (_, index) => `Entry ${index + 1}`
+      ).reverse(),
       datasets: [
         {
           label: `ThinkSpeak ${label}`,
@@ -130,7 +137,6 @@ export default function WeatherCalculationModel({ device, onClose }) {
       ],
     };
   };
-  
 
   const generatePDF = () => {
     const doc = new jsPDF();
@@ -181,19 +187,16 @@ export default function WeatherCalculationModel({ device, onClose }) {
           <LiquidFillGauge
             width={150}
             height={150}
-            value={device?.latestData?.waterLevel || 0}
+            value={(device?.latestData?.waterLevel || 0) / 100}
             riseAnimation
             waveAnimation
           />
+          <p style={{ fontSize: "18px", marginTop: "10px" }}>
+            {((device?.latestData?.waterLevel || 0) / 100).toFixed(2)} m
+          </p>
         </div>
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            flexDirection: "column",
-          }}
-        >
+
+        <div style={{ textAlign: "center" }}>
           <h3>Temperature</h3>
           <Thermometer
             theme="light"
@@ -206,10 +209,32 @@ export default function WeatherCalculationModel({ device, onClose }) {
 
         <div style={{ textAlign: "center" }}>
           <h3>Weather Status</h3>
-          {parseInt(device?.latestData?.rainfall, 10) === 1 ? (
-            <CloudRain size={150} color="blue" />
+          {parseInt(device?.latestData?.rainfall) === 0 ? (
+            <>
+              <CloudRain size={150} color="blue" />
+              <p
+                style={{
+                  fontSize: "18px",
+                  marginTop: "10px",
+                  fontWeight: "bold",
+                }}
+              >
+                Raining
+              </p>
+            </>
           ) : (
-            <Sun size={150} color="orange" />
+            <>
+              <Sun size={150} color="orange" />
+              <p
+                style={{
+                  fontSize: "18px",
+                  marginTop: "10px",
+                  fontWeight: "bold",
+                }}
+              >
+                Sunny
+              </p>
+            </>
           )}
         </div>
 

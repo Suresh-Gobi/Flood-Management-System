@@ -40,7 +40,7 @@ export default function UpdateUserRoleModal({ visible, onClose, user, onUpdateSu
       onCancel={onClose}
       footer={[
         <Button key="cancel" onClick={onClose}>Cancel</Button>,
-        <Button key="update" type="primary" loading={loading} onClick={handleUpdateRole}>
+        <Button key="update" type="default" loading={loading} onClick={handleUpdateRole}>
           Update Role
         </Button>,
       ]}

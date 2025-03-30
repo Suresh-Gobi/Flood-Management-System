@@ -23,22 +23,21 @@ const calculateDistance = (lat1, lon1, lat2, lon2) => {
   return R * c;
 };
 
-
 const getNearbyUsers = async (deviceLocation) => {
   try {
     const users = await User.find();
     return users.filter((user) => {
       if (!user.longitude || !user.latitude) return false;
-      
+
       const distance = calculateDistance(
-        deviceLocation.latitude, 
-        deviceLocation.longitude, 
-        user.latitude, 
+        deviceLocation.latitude,
+        deviceLocation.longitude,
+        user.latitude,
         user.longitude
       );
 
-    //   console.log(`User: ${user.username}, Distance: ${distance.toFixed(2)} km`);
-      
+      //   console.log(`User: ${user.username}, Distance: ${distance.toFixed(2)} km`);
+
       return distance <= 10;
     });
   } catch (error) {
@@ -47,13 +46,8 @@ const getNearbyUsers = async (deviceLocation) => {
   }
 };
 
-
-
 const checkLatestData = async () => {
   try {
-    
-
-
     const latestData = await ThingSpeakData.findOne()
       .sort({ createdAt: -1 })
       .populate("deviceId");
@@ -104,10 +98,17 @@ const checkLatestData = async () => {
 
       if (nearbyUsers.length > 0) {
         console.log(`Sending alerts to ${nearbyUsers.length} users nearby...`);
-        nearbyUsers.forEach((user) => {
-          // sendVerificationEmail(user.email, alertMessage);
-          // sendSms(user.phone_number, alertMessage);
-        });
+
+        const emailPromises = nearbyUsers.map((user) =>
+          sendVerificationEmail(user.email, alertMessage)
+        );
+        const smsPromises = nearbyUsers.map((user) =>
+          sendSms(user.phone_number, alertMessage)
+        );
+
+        await Promise.all([...emailPromises, ...smsPromises]);
+
+        console.log("✅ All email and SMS notifications sent successfully!");
       } else {
         console.log("No users found within 10km radius.");
       }
@@ -121,6 +122,8 @@ const checkLatestData = async () => {
 
 setInterval(checkLatestData, FETCH_INTERVAL);
 
-console.log("🚀 ThingSpeak data monitoring started. Checking every 10 seconds...");
+console.log(
+  "🚀 ThingSpeak data monitoring started. Checking every 10 seconds..."
+);
 
 module.exports = { checkLatestData };

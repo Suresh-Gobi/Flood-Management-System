@@ -99,25 +99,29 @@ const GoogleMapComponent = () => {
     const buildContent = (device) => {
       const content = document.createElement("div");
       content.classList.add("device-info");
-
+    
+      const latestData = device.latestData || {};
+      const waterLevel = latestData.waterLevel || 0;
+      
       const icon = document.createElement("div");
       icon.classList.add("home-icon");
-      icon.innerHTML = "💧";
       icon.style.cursor = "pointer";
       icon.style.fontSize = "32px";
+      icon.innerHTML = waterLevel > 8 ? "🔴" : "💧"; 
 
+    
       const details = document.createElement("div");
       details.classList.add("device-details");
       details.style.display = "none";
-
-      const latestData = device.latestData || {};
-
+    
       details.innerHTML = `
         <div class="card" style="background-color: white; padding: 10px; border-radius: 5px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); font-size: 16px;">
           <div class="card-header" style="font-weight: bold; font-size: 18px; margin-bottom: 10px;">${device.name}</div>
           <div class="card-body">
             <hr/>
-            <p><strong>Water Level:</strong> ${latestData.waterLevel || "N/A"} ${latestData.waterLevel > 8 ? '<span>💧</span>' : ''}</p>
+            <p><strong>Water Level:</strong> ${waterLevel} 
+            <span style="color: ${waterLevel > 8 ? 'red' : 'blue'}; font-size: 24px;">💧</span>
+            </p>
             <p><strong>Raining Status:</strong> ${latestData.rainingStatus === '1' ? "Raining" : "No Rain"} <span>🌧️</span></p>
             <p><strong>Temperature:</strong> ${latestData.temperature || "N/A"} <span>🌡️</span></p>
             <p><strong>Air Pressure:</strong> ${latestData.airPressure || "N/A"} <span>🌬️</span></p>
@@ -125,15 +129,16 @@ const GoogleMapComponent = () => {
           </div>
         </div>
       `;
-
+    
       icon.addEventListener("click", () => {
         details.style.display = details.style.display === "none" ? "block" : "none";
       });
-
+    
       content.appendChild(icon);
       content.appendChild(details);
       return content;
     };
+    
 
     loadGoogleMaps();
   }, [devices]);

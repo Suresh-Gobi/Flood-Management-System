@@ -99,12 +99,12 @@ const checkLatestData = async () => {
       if (nearbyUsers.length > 0) {
         console.log(`Sending alerts to ${nearbyUsers.length} users nearby...`);
 
-        const emailPromises = nearbyUsers.map((user) =>
-          sendVerificationEmail(user.email, alertMessage)
-        );
-        const smsPromises = nearbyUsers.map((user) =>
-          sendSms(user.phone_number, alertMessage)
-        );
+        // const emailPromises = nearbyUsers.map((user) =>
+        //   sendVerificationEmail(user.email, alertMessage)
+        // );
+        // const smsPromises = nearbyUsers.map((user) =>
+        //   sendSms(user.phone_number, alertMessage)
+        // );
 
         await Promise.all([...emailPromises, ...smsPromises]);
 

@@ -107,7 +107,7 @@ const GoogleMapComponent = () => {
       icon.classList.add("home-icon");
       icon.style.cursor = "pointer";
       icon.style.fontSize = "32px";
-      icon.innerHTML = waterLevel > 8 ? "🔴" : "💧"; 
+      icon.innerHTML = waterLevel > 0 ? "🔴" : "💧"; 
 
     
       const details = document.createElement("div");

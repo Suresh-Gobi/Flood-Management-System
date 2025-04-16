@@ -8,7 +8,6 @@ import LiquidFillGauge from "react-liquid-gauge";
 import Thermometer from "react-thermometer-component";
 import { CloudRain, Sun } from "lucide-react";
 
-
 export default function WeatherCalculationModel({ device, onClose }) {
   const [thinkSpeakData, setThinkSpeakData] = useState(null);
   const [waterfallData, setWaterfallData] = useState([]);
@@ -26,6 +25,7 @@ export default function WeatherCalculationModel({ device, onClose }) {
   useEffect(() => {
     if (!device) return;
 
+    // Function to fetch ThinkSpeak data
     const fetchThinkSpeakData = async () => {
       try {
         const response = await fetch(
@@ -38,10 +38,15 @@ export default function WeatherCalculationModel({ device, onClose }) {
       }
     };
 
+    // Initial data fetch
     fetchThinkSpeakData();
+
+    // Set interval to fetch data every second
     const interval = setInterval(fetchThinkSpeakData, 1000);
+
+    // Cleanup function to clear interval when the component unmounts or device changes
     return () => clearInterval(interval);
-  }, [device]);
+  }, [device?.deviceId]); // Update the effect when `device.deviceId` changes
 
   useEffect(() => {
     if (!device) return;
@@ -185,6 +190,7 @@ export default function WeatherCalculationModel({ device, onClose }) {
         <div style={{ textAlign: "center" }}>
           <h3>Water Level</h3>
           <LiquidFillGauge
+            key={device?.latestData?.waterLevel}
             width={150}
             height={150}
             value={(device?.latestData?.waterLevel || 0) / 100}
@@ -241,6 +247,7 @@ export default function WeatherCalculationModel({ device, onClose }) {
         <div style={{ textAlign: "center" }}>
           <h3>Air Pressure</h3>
           <LiquidFillGauge
+            key={device?.latestData?.airPressure}
             width={150}
             height={150}
             value={device?.latestData?.airPressure || 0}

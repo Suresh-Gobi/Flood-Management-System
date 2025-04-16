@@ -15,8 +15,8 @@
  */
 const nodemailer = require("nodemailer");
 
-const SMTP_USER = process.env.SMTP_USER || "sureshgobi34@gmail.com";
-const SMTP_PASS = process.env.SMTP_PASS || "cmdmssbgqzqlfgsx";
+const SMTP_USER = process.env.SMTP_USER || "htnpraveen@gmail.com";
+const SMTP_PASS = process.env.SMTP_PASS || "ttlxdshcddgbwrru";
 
 const transporter = nodemailer.createTransport({
     service: "gmail",
@@ -31,7 +31,7 @@ const transporter = nodemailer.createTransport({
 
 const sendVerificationEmail = (email, alert) => {
     const mailOptions = {
-        from: "sureshgobi34@gmail.com",
+        from: "htnpraveen@gmail.com",
         to: email,
         subject: "ALerts",
         text: `Your alert code is: ${alert}`,

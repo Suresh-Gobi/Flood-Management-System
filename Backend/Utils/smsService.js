@@ -1,3 +1,13 @@
+/**
+ * Sends an SMS message using the Notify.lk API.
+ *
+ * @async
+ * @function sendSms
+ * @param {string} phone_number - The recipient's phone number. If it does not start with a "+" sign, it will be converted to the Sri Lankan format by prefixing "94".
+ * @param {string} message - The message content to be sent via SMS.
+ * @returns {Promise<void>} - Resolves when the SMS is successfully sent. Logs the response or error to the console.
+ * @throws {Error} - Logs an error if the SMS sending fails, including the error response or message.
+ */
 const axios = require("axios");
 
 const NOTIFY_LK_API_KEY = process.env.NOTIFY_LK_API_KEY || "qU0cxbHf8NZabci5T4ez";

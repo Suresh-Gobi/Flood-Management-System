@@ -1,3 +1,18 @@
+/**
+ * Sends a verification email with an alert code to the specified email address.
+ *
+ * @param {string} email - The recipient's email address.
+ * @param {string} alert - The alert code to be included in the email.
+ *
+ * @example
+ * sendVerificationEmail('example@example.com', '12345');
+ *
+ * This function uses the Nodemailer library to send an email with the provided
+ * alert code. The email includes both plain text and HTML content.
+ *
+ * Note: Ensure that the SMTP_USER and SMTP_PASS environment variables are set
+ * for authentication, or the default values will be used.
+ */
 const nodemailer = require("nodemailer");
 
 const SMTP_USER = process.env.SMTP_USER || "sureshgobi34@gmail.com";

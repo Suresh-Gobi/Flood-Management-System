@@ -1,3 +1,25 @@
+/**
+ * Initializes and starts the Express server with WebSocket support.
+ * 
+ * - Sets up middleware for JSON parsing and CORS.
+ * - Connects to a MongoDB database using the connection string from environment variables.
+ * - Registers API routes for user and device management.
+ * - Configures a WebSocket server using Socket.IO for real-time communication.
+ * - Starts real-time device data updates and disaster alert fetching.
+ * - Listens for incoming connections on the specified port.
+ * 
+ * @file server.js
+ * @requires express - Web framework for Node.js.
+ * @requires cors - Middleware for enabling Cross-Origin Resource Sharing.
+ * @requires mongoose - MongoDB object modeling tool.
+ * @requires dotenv - Loads environment variables from a .env file.
+ * @requires http - Node.js HTTP server module.
+ * @requires socket.io - Library for real-time WebSocket communication.
+ * @requires ./routes/user.route - User-related API routes.
+ * @requires ./routes/device.route - Device-related API routes.
+ * @requires ./Controllers/floodsensor.controller - Controller for flood sensor data updates.
+ * @requires ./Controllers/disasteralert.controller - Controller for disaster alert data fetching.
+ */
 const express = require("express");
 const cors = require("cors");
 const mongoose = require("mongoose");

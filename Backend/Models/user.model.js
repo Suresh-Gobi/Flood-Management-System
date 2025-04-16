@@ -1,3 +1,15 @@
+/**
+ * Creates a default admin user in the database if no admin user already exists.
+ * 
+ * This function checks for the existence of a user with the role "admin". If no such user exists,
+ * it creates a new admin user with default credentials (username: "admin", email: "admin@gmail.com",
+ * password: "admin123"). The password is hashed using bcrypt before saving the user to the database.
+ * 
+ * @async
+ * @function createDefaultAdmin
+ * @returns {Promise<void>} Resolves when the default admin user is created or already exists.
+ * @throws {Error} Logs an error if there is an issue during the creation of the admin user.
+ */
 const mongoose = require("mongoose");
 const bcrypt = require("bcryptjs");
 

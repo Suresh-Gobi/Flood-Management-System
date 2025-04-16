@@ -27,6 +27,7 @@ const WATER_LEVEL_THRESHOLD = 0;
 const RAIN_THRESHOLD = 1;
 const FETCH_INTERVAL = 20000;
 
+
 const calculateDistance = (lat1, lon1, lat2, lon2) => {
   const R = 6371;
   const dLat = (lat2 - lat1) * (Math.PI / 180);
@@ -115,13 +116,13 @@ const fetchAlert = async () => {
       const alertMessage = `🚨 Alert: Water level has increased significantly! Flood alert triggered. Please take necessary precautions.`;
 
       // Send SMS alerts to nearby users
-      const smsPromises = nearbyUsers.map((user) =>
-        sendSms(user.phone_number, alertMessage)
-      );
+      // const smsPromises = nearbyUsers.map((user) =>
+      //   sendSms(user.phone_number, alertMessage)
+      // );
 
-      const emailPromises = nearbyUsers.map((user) =>
-        sendVerificationEmail(user.email, alertMessage)
-      );
+      // const emailPromises = nearbyUsers.map((user) =>
+      //   sendVerificationEmail(user.email, alertMessage)
+      // );
 
       await Promise.all(smsPromises, emailPromises);
 
@@ -220,4 +221,4 @@ console.log(
 // );
 
 
-module.exports = { checkLatestData, fetchAlert };
+module.exports = {fetchAlert };

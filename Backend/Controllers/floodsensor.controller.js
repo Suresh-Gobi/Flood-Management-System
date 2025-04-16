@@ -1,3 +1,41 @@
+/**
+ * Fetches all ThingSpeak data for a specific device from MongoDB.
+ * 
+ * @async
+ * @function getAllThingSpeakDataByID
+ * @param {Object} req - The request object.
+ * @param {Object} req.params - The parameters from the request.
+ * @param {string} req.params.deviceId - The ID of the device to fetch data for.
+ * @param {Object} res - The response object.
+ * @returns {Promise<void>} Sends a JSON response containing the ThingSpeak data for the specified device.
+ * 
+ * @throws {Error} If there is an issue retrieving the data, a 500 status code is returned with an error message.
+ * 
+ * @example
+ * // Example request:
+ * // GET /api/devices/:deviceId/thingspeak-data
+ * 
+ * // Example response:
+ * // {
+ * //   "success": true,
+ * //   "data": [
+ * //     {
+ * //       "deviceId": "12345",
+ * //       "entryId": 1,
+ * //       "createdAt": "2023-03-01T12:00:00Z",
+ * //       "waterLevel": 5.5,
+ * //       "rainingStatus": "No",
+ * //       "temperature": 25.3,
+ * //       "airPressure": 1013.25,
+ * //       "waterfallLevel": 0.0,
+ * //       "latitude": 12.3456,
+ * //       "longitude": 78.9012,
+ * //       "elevation": 100.0,
+ * //       "status": "Active"
+ * //     }
+ * //   ]
+ * // }
+ */
 const axios = require("axios");
 const Device = require("../Models/device.model");
 const ThingSpeakData = require("../Models/ThingSpeakData");

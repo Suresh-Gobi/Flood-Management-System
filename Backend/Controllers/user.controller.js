@@ -1,3 +1,18 @@
+/**
+ * Deletes a user from the database based on the provided user ID.
+ *
+ * @async
+ * @function deleteUser
+ * @param {Object} req - The request object.
+ * @param {Object} req.params - The request parameters.
+ * @param {string} req.params.userId - The ID of the user to be deleted.
+ * @param {Object} res - The response object.
+ * @returns {Promise<void>} Sends a JSON response indicating the success or failure of the operation.
+ *
+ * @throws {Error} Returns a 400 status if the user ID is invalid.
+ * @throws {Error} Returns a 404 status if the user is not found.
+ * @throws {Error} Returns a 500 status if there is an internal server error.
+ */
 const User = require("../Models/user.model");
 const mongoose = require("mongoose");
 const bcrypt = require("bcrypt");

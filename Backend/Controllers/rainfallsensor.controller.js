@@ -1,3 +1,15 @@
+
+
+/**
+ * Fetches sensor data from the ThingSpeak API.
+ * Retrieves the latest sensor data feeds from the specified channel.
+ *
+ * @async
+ * @function getSensorData
+ * @param {Object} req - The request object.
+ * @param {Object} res - The response object.
+ * @returns {Promise<void>} Sends a JSON response containing the sensor data or an error message.
+ */
 const axios = require("axios");
 
 const API_KEY = "M5ZAQE2XCSVBJCS1";

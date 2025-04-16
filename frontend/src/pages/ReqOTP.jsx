@@ -27,7 +27,7 @@ export default function ReqOTP() {
                 response.data.message || "OTP has been sent to your email."
             );
 
-            // Save email to local storage
+            
             localStorage.setItem("email", values.email);
         } catch (error) {
             console.error("Error:");
@@ -39,10 +39,10 @@ export default function ReqOTP() {
     };
 
     return (
-        <div className="flex items-center justify-center h-screen">
+        <div className="flex items-center justify-center h-screen" style={{ backgroundImage: "url('https://uplink.weforum.org/uplink/sfc/servlet.shepherd/version/renditionDownload?rendition=ORIGINAL_jpg&versionId=068TE000007b39WYAQ')" }}>
             <Card
                 title={<h1 className="text-2xl">Request OTP</h1>}
-                className="w-full max-w-md p-5 rounded-lg shadow-md"
+                className="w-full max-w-md p-5 rounded-lg shadow-md bg-white bg-opacity-75"
             >
                 <Form
                     name="otpRequest"

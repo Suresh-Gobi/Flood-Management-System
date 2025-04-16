@@ -1,3 +1,20 @@
+/**
+ * Sends a verification email with an OTP code to the specified email address.
+ *
+ * @param {string} email - The recipient's email address.
+ * @param {string} otp - The one-time password (OTP) code to include in the email.
+ *
+ * @description
+ * This function uses the Nodemailer library to send an email containing an OTP code
+ * for email verification. The email includes both plain text and HTML content.
+ * The SMTP credentials are configured using environment variables or default values.
+ *
+ * @example
+ * const { sendVerificationEmail } = require('./email');
+ * sendVerificationEmail('example@example.com', '123456');
+ *
+ * @throws {Error} Logs an error message if the email fails to send.
+ */
 const nodemailer = require("nodemailer");
 
 const SMTP_USER = process.env.SMTP_USER || "sureshgobi34@gmail.com";

@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { FaUserCircle } from "react-icons/fa"; // Import an icon from react-icons
+import { FaUserCircle } from "react-icons/fa";
 
 export default function Header() {
   const navigate = useNavigate();
@@ -37,12 +37,12 @@ export default function Header() {
               </Link>
             </li>
             <li>
-              <Link
+              {/* <Link
                 to="/about"
                 className="text-gray-700 hover:text-blue-500 transition-colors duration-300 text-xs"
               >
                 About
-              </Link>
+              </Link> */}
             </li>
           </ul>
 
@@ -65,12 +65,6 @@ export default function Header() {
                         Dashboard
                       </Link>
 
-                      <Link
-                        to="/settings"
-                        className="block px-4 py-2 text-gray-700 hover:bg-gray-100"
-                      >
-                        Settings
-                      </Link>
                       <button
                         onClick={handleLogout}
                         className="block w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-100"

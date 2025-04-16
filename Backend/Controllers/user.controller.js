@@ -1,4 +1,20 @@
+/**
+ * Deletes a user from the database based on the provided user ID.
+ *
+ * @async
+ * @function deleteUser
+ * @param {Object} req - The request object.
+ * @param {Object} req.params - The request parameters.
+ * @param {string} req.params.userId - The ID of the user to be deleted.
+ * @param {Object} res - The response object.
+ * @returns {Promise<void>} Sends a JSON response indicating the success or failure of the operation.
+ *
+ * @throws {Error} Returns a 400 status if the user ID is invalid.
+ * @throws {Error} Returns a 404 status if the user is not found.
+ * @throws {Error} Returns a 500 status if there is an internal server error.
+ */
 const User = require("../Models/user.model");
+const mongoose = require("mongoose");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const nodemailer = require("nodemailer");
@@ -21,6 +37,9 @@ exports.signup = async (req, res) => {
     province,
     district,
     country,
+    latitude = null,
+    longitude = null,
+
   } = req.body;
 
   try {
@@ -46,6 +65,9 @@ exports.signup = async (req, res) => {
       province,
       district,
       country,
+      latitude: latitude ? parseFloat(latitude) : null,
+      longitude: longitude ? parseFloat(longitude) : null,
+
     });
 
     // Hash password
@@ -73,6 +95,7 @@ exports.signup = async (req, res) => {
   }
 };
 
+
 exports.signin = async (req, res) => {
   const { username, password } = req.body;
 
@@ -89,7 +112,7 @@ exports.signin = async (req, res) => {
       return res.status(400).json({ msg: "Invalid Credentials" });
     }
 
-    // Create and return JWT token
+    // Create JWT token (without role)
     const payload = { id: user.id };
 
     jwt.sign(
@@ -98,7 +121,7 @@ exports.signin = async (req, res) => {
       { expiresIn: "1h" },
       (err, token) => {
         if (err) throw err;
-        res.json({ token });
+        res.json({ token, role: user.role });
       }
     );
   } catch (err) {
@@ -106,6 +129,7 @@ exports.signin = async (req, res) => {
     res.status(500).send("Server error");
   }
 };
+
 
 exports.sendPasswordResetOTP = async (req, res) => {
   const { email } = req.body;
@@ -117,7 +141,7 @@ exports.sendPasswordResetOTP = async (req, res) => {
     }
 
     // Generate OTP
-    const otp = Math.floor(100000 + Math.random() * 900000); // Generates a 6-digit OTP
+    const otp = Math.floor(100000 + Math.random() * 900000); 
 
     // Save OTP to database
     user.resetPasswordOTP = otp;
@@ -221,5 +245,58 @@ exports.updateUserDetails = async (req, res) => {
   } catch (err) {
     console.error("Error updating user details:", err.message);
     res.status(500).send("Server error");
+  }
+};
+
+exports.getAllUsers = async (req, res) => {
+  try {
+    let users = await User.find().select("-password -resetPasswordOTP -resetPasswordExpires");
+    res.json(users);
+  } catch (err) {
+    console.error("Error fetching all users:", err.message);
+    res.status(500).send("Server error");
+  }
+};
+
+exports.updateUserRole = async (req, res) => {
+  const { userId, role } = req.body;
+
+  try {
+    let user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ msg: "User not found" });
+    }
+
+    user.role = role;
+
+    await user.save();
+
+    res.json({ msg: "User role updated successfully", user });
+  } catch (err) {
+    console.error("Error updating user role:", err.message);
+    res.status(500).send("Server error");
+  }
+};
+
+exports.deleteUser = async (req, res) => {
+  try {
+    const { userId } = req.params;
+    
+    console.log("Received request to delete user with ID:", userId);
+
+    if (!mongoose.Types.ObjectId.isValid(userId)) {
+      return res.status(400).json({ success: false, message: "Invalid user ID" });
+    }
+
+    const deletedUser = await User.findByIdAndDelete(userId);
+
+    if (!deletedUser) {
+      return res.status(404).json({ success: false, message: "User not found" });
+    }
+
+    res.json({ success: true, message: "User deleted successfully" });
+
+  } catch (error) {
+    res.status(500).json({ success: false, message: "Internal Server Error", error: error.message });
   }
 };

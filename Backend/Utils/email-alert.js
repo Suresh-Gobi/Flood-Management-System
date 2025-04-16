@@ -1,3 +1,18 @@
+/**
+ * Sends a verification email with an alert code to the specified email address.
+ *
+ * @param {string} email - The recipient's email address.
+ * @param {string} alert - The alert code to be included in the email.
+ *
+ * @example
+ * sendVerificationEmail('example@example.com', '12345');
+ *
+ * This function uses the Nodemailer library to send an email with the provided
+ * alert code. The email includes both plain text and HTML content.
+ *
+ * Note: Ensure that the SMTP_USER and SMTP_PASS environment variables are set
+ * for authentication, or the default values will be used.
+ */
 const nodemailer = require("nodemailer");
 
 const SMTP_USER = process.env.SMTP_USER || "sureshgobi34@gmail.com";
@@ -14,17 +29,15 @@ const transporter = nodemailer.createTransport({
     secure: false,
 });
 
-const sendVerificationEmail = (email, otp) => {
+const sendVerificationEmail = (email, alert) => {
     const mailOptions = {
         from: "sureshgobi34@gmail.com",
         to: email,
-        subject: "Email Verification",
-        text: `Your OTP code is: ${otp}`,
+        subject: "ALerts",
+        text: `Your alert code is: ${alert}`,
         html: `
             <div style="font-family: Arial, sans-serif; background-color: #f4f4f4; text-align: center; padding: 20px;">
-                <h1 style="color: #333; text-align: center;">Email Verification</h1>
-                <p style="color: #666; font-size: 16px;">Your OTP code is:</p>
-                <p style="color: #007BFF; font-size: 24px; font-weight: bold;">${otp}</p>
+                <p style="color: #007BFF; font-size: 24px; font-weight: bold;">${alert}</p>
             </div>
         `,
     };

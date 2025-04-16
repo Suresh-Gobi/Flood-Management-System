@@ -1,3 +1,41 @@
+/**
+ * Fetches all ThingSpeak data for a specific device from MongoDB.
+ * 
+ * @async
+ * @function getAllThingSpeakDataByID
+ * @param {Object} req - The request object.
+ * @param {Object} req.params - The parameters from the request.
+ * @param {string} req.params.deviceId - The ID of the device to fetch data for.
+ * @param {Object} res - The response object.
+ * @returns {Promise<void>} Sends a JSON response containing the ThingSpeak data for the specified device.
+ * 
+ * @throws {Error} If there is an issue retrieving the data, a 500 status code is returned with an error message.
+ * 
+ * @example
+ * // Example request:
+ * // GET /api/devices/:deviceId/thingspeak-data
+ * 
+ * // Example response:
+ * // {
+ * //   "success": true,
+ * //   "data": [
+ * //     {
+ * //       "deviceId": "12345",
+ * //       "entryId": 1,
+ * //       "createdAt": "2023-03-01T12:00:00Z",
+ * //       "waterLevel": 5.5,
+ * //       "rainingStatus": "No",
+ * //       "temperature": 25.3,
+ * //       "airPressure": 1013.25,
+ * //       "waterfallLevel": 0.0,
+ * //       "latitude": 12.3456,
+ * //       "longitude": 78.9012,
+ * //       "elevation": 100.0,
+ * //       "status": "Active"
+ * //     }
+ * //   ]
+ * // }
+ */
 const axios = require("axios");
 const Device = require("../Models/device.model");
 const ThingSpeakData = require("../Models/ThingSpeakData");
@@ -5,15 +43,15 @@ const ThingSpeakData = require("../Models/ThingSpeakData");
 const API_KEY = "Z5OGMVIFH683U3V1";
 const BASE_URL = "https://api.thingspeak.com/channels";
 
-// ✅ Get all data for a specific device
-const getDeviceData = async (req, res) => {
+// Get all data for a specific device
+const getDeviceData = async () => {
   try {
     console.log("Fetching devices from MongoDB...");
     const devices = await Device.find();
 
     if (!devices.length) {
       console.log("No devices found.");
-      return res.status(404).json({ success: false, message: "No devices found" });
+      return;
     }
 
     console.log(`Found ${devices.length} devices. Fetching data from ThingSpeak...`);
@@ -24,7 +62,7 @@ const getDeviceData = async (req, res) => {
         console.log(`Fetching data for Device: ${device.name} (ID: ${device._id})`);
 
         const response = await axios.get(`${BASE_URL}/${device.thingSpeakChannelId}/feeds.json`, {
-          params: { api_key: API_KEY, results: 10 }, // Fetch last 10 results for testing
+          params: { api_key: API_KEY, results: 10 }, // Fetch last 10 results
         });
 
         const feeds = response.data.feeds;
@@ -32,14 +70,7 @@ const getDeviceData = async (req, res) => {
 
         if (!feeds || feeds.length === 0) {
           console.log(`No data available for ${device.name}`);
-          return {
-            deviceId: device._id,
-            name: device.name,
-            latitude: device.location?.latitude,
-            longitude: device.location?.longitude,
-            data: [],
-            error: "No data available",
-          };
+          return;
         }
 
         // Save each entry to MongoDB
@@ -61,9 +92,7 @@ const getDeviceData = async (req, res) => {
             });
 
             console.log("Saving data:", newEntry);
-
             await newEntry.save(); // Save to MongoDB
-
             console.log("Data saved successfully!");
           } catch (saveError) {
             console.error("Error saving data to MongoDB:", saveError.message);
@@ -71,43 +100,23 @@ const getDeviceData = async (req, res) => {
         });
 
         await Promise.all(savePromises); // Wait for all saves to complete
-
-        return {
-          deviceId: device._id,
-          name: device.name,
-          latitude: device.location?.latitude,
-          longitude: device.location?.longitude,
-          totalEntries: feeds.length,
-        };
       } catch (fetchError) {
         console.error(`Error fetching data for device ${device.name}:`, fetchError.message);
-        return {
-          deviceId: device._id,
-          name: device.name,
-          latitude: device.location?.latitude,
-          longitude: device.location?.longitude,
-          data: [],
-          error: "Failed to fetch data",
-        };
       }
     });
 
-    const allDeviceData = await Promise.all(deviceDataPromises);
-
+    await Promise.all(deviceDataPromises);
     console.log("Data fetch and save process complete.");
-
-    res.status(200).json({
-      success: true,
-      devices: allDeviceData,
-    });
   } catch (error) {
     console.error("Error fetching all device data:", error.message);
-    res.status(500).json({ success: false, message: "Failed to retrieve device data" });
   }
 };
 
+// Run the function every 2 seconds
+setInterval(getDeviceData, 20000);
 
-// ✅ Get specific field data (e.g., water level) for a device
+
+// Get specific field data (e.g., water level) for a device
 const getFieldData = async (req, res) => {
   try {
     const { deviceId, field } = req.params;
@@ -142,7 +151,7 @@ const getFieldData = async (req, res) => {
   }
 };
 
-// ✅ Get the status of a specific device's channel
+// Get the status of a specific device's channel
 const getChannelStatus = async (req, res) => {
   try {
     const { deviceId } = req.params;
@@ -176,7 +185,7 @@ const getChannelStatus = async (req, res) => {
   }
 };
 
-// ✅ Get ThingSpeak data directly from ThingSpeak channel
+// Get ThingSpeak data directly from ThingSpeak channel
 const getThingSpeakDataDirect = async (req, res) => {
   try {
     console.log("Fetching devices from MongoDB...");
@@ -261,7 +270,91 @@ const getThingSpeakDataDirect = async (req, res) => {
 };
 
 
-// ✅ Get all ThingSpeak data
+const startDeviceDataUpdates = (io) => {
+  const fetchAndEmitDeviceData = async () => {
+    try {
+      console.log("Fetching devices from MongoDB...");
+      const devices = await Device.find();
+
+      if (!devices.length) {
+        console.log("No devices found.");
+        return;
+      }
+
+      console.log(`Found ${devices.length} devices. Fetching latest data...`);
+
+      const deviceDataPromises = devices.map(async (device) => {
+        try {
+          console.log(`Fetching data for Device: ${device.name} (ID: ${device._id})`);
+
+          const response = await axios.get(`${BASE_URL}/${device.thingSpeakChannelId}/feeds.json`, {
+            params: { api_key: API_KEY },
+          });
+
+          const feeds = response.data.feeds;
+          if (!feeds || feeds.length === 0) {
+            console.log(`No data available for ${device.name}`);
+            return {
+              deviceId: device._id,
+              name: device.name,
+              latitude: device.location?.latitude,
+              longitude: device.location?.longitude,
+              latestData: null,
+              error: "No data available",
+            };
+          }
+
+          const latestEntry = feeds[feeds.length - 1];
+
+          return {
+            deviceId: device._id,
+            name: device.name,
+            latitude: device.location?.latitude,
+            longitude: device.location?.longitude,
+            latestData: {
+              entryId: latestEntry.entry_id,
+              createdAt: new Date(latestEntry.created_at),
+              waterLevel: latestEntry.field1 ? parseFloat(latestEntry.field1) : null,
+              rainingStatus: latestEntry.field2 || "Unknown",
+              temperature: latestEntry.field3 ? parseFloat(latestEntry.field3) : null,
+              airPressure: latestEntry.field4 ? parseFloat(latestEntry.field4) : null,
+              waterfallLevel: latestEntry.field5 ? parseFloat(latestEntry.field5) : null,
+              latitude: latestEntry.latitude ? parseFloat(latestEntry.latitude) : null,
+              longitude: latestEntry.longitude ? parseFloat(latestEntry.longitude) : null,
+              elevation: latestEntry.elevation ? parseFloat(latestEntry.elevation) : null,
+              status: latestEntry.status || "Unknown",
+            },
+          };
+        } catch (error) {
+          console.error(`Error fetching data for device ${device.name}:`, error.message);
+          return {
+            deviceId: device._id,
+            name: device.name,
+            latitude: device.location?.latitude,
+            longitude: device.location?.longitude,
+            latestData: null,
+            error: "Failed to fetch data",
+          };
+        }
+      });
+
+      const allDeviceData = await Promise.all(deviceDataPromises);
+
+      // Emit latest data to all connected clients
+      io.emit("deviceData", allDeviceData);
+      console.log("Emitted updated device data to clients.");
+    } catch (error) {
+      console.error("Error fetching device data:", error.message);
+    }
+  };
+
+  // Fetch and send data every 5 seconds
+  setInterval(fetchAndEmitDeviceData, 5000);
+};
+
+
+
+// Get all ThingSpeak data
 const getAllThingSpeakDataByID = async (req, res) => {
   try {
     const { deviceId } = req.params;
@@ -286,4 +379,4 @@ const getAllThingSpeakDataByID = async (req, res) => {
 };
 
 
-module.exports = { getDeviceData, getFieldData, getChannelStatus, getAllThingSpeakDataByID, getThingSpeakDataDirect };
+module.exports = { getDeviceData, getFieldData, getChannelStatus, getAllThingSpeakDataByID, getThingSpeakDataDirect, startDeviceDataUpdates };

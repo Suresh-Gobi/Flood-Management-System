@@ -37,8 +37,8 @@ export default function ResetPassword() {
     };
 
     return (
-        <div className="flex items-center justify-center h-screen">
-            <Card title={<h1 className="text-2xl">Reset Password</h1>} className="w-full max-w-md p-5 rounded-lg shadow-md">
+        <div className="flex items-center justify-center h-screen" style={{ backgroundImage: "url('https://uplink.weforum.org/uplink/sfc/servlet.shepherd/version/renditionDownload?rendition=ORIGINAL_jpg&versionId=068TE000007b39WYAQ')" }}>
+            <Card title={<h1 className="text-2xl">Reset Password</h1>} className="w-full max-w-md p-5 rounded-lg shadow-md bg-white bg-opacity-75">
                 <Form form={form} name="resetPassword" layout="vertical" onFinish={onFinish} autoComplete="off">
                     <Form.Item
                         label="Email"

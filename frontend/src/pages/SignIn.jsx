@@ -24,8 +24,9 @@ const SignIn = () => {
 
       console.log("Success:", response.data);
 
-      // Save token to localStorage
+      
       localStorage.setItem("token", response.data.token);
+      localStorage.setItem("role", response.data.role);
 
       openNotification(
         "success",
@@ -33,9 +34,8 @@ const SignIn = () => {
         "You have successfully signed in!"
       );
 
-      // Redirect to dashboard
+      
       navigate("/dashboard");
-
     } catch (error) {
       console.error("Failed:", error.response?.data);
 
@@ -50,12 +50,17 @@ const SignIn = () => {
   };
 
   return (
-    <div className="flex items-center justify-center h-screen">
+    <div className="flex items-center justify-center h-screen" style={{ backgroundImage: "url('https://uplink.weforum.org/uplink/sfc/servlet.shepherd/version/renditionDownload?rendition=ORIGINAL_jpg&versionId=068TE000007b39WYAQ')" }}>
       <Card
         title={<h1 className="text-2xl">Signin</h1>}
-        className="w-full max-w-xl p-2 rounded-lg shadow-md"
+        className="w-full max-w-xl p-2 rounded-lg shadow-md bg-white bg-opacity-75"
       >
-        <Form name="signinForm" layout="vertical" onFinish={onFinish} autoComplete="off">
+        <Form
+          name="signinForm"
+          layout="vertical"
+          onFinish={onFinish}
+          autoComplete="off"
+        >
           <Form.Item
             label="Username"
             name="username"

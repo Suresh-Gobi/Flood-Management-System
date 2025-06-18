@@ -221,7 +221,7 @@ const getThingSpeakDataDirect = async (req, res) => {
           };
         }
 
-        const latestEntry = feeds[0];
+        const latestEntry = feeds[feeds.length - 1];
 
         return {
           deviceId: device._id,

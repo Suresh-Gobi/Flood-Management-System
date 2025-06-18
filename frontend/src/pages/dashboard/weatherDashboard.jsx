@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { Card, Spin, Typography, Row, Col, Modal, Button } from "antd";
+import { Card, Spin, Typography, Row, Col, Modal } from "antd";
 import { Droplet, CloudRain, Thermometer, BarChart } from "lucide-react";
 import WeatherCalculationModel from "../models/WeatherCalculationModel";
 
@@ -12,33 +12,39 @@ export default function WeatherDashboard() {
   const [error, setError] = useState(null);
   const [selectedDevice, setSelectedDevice] = useState(null);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const token = localStorage.getItem("token");
-        if (!token) {
-          throw new Error("Authentication token is missing");
-        }
-        const response = await axios.get("/api/device/get-thinkspeakdata", {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        if (response.data.success) {
-          setDevices(response.data.devices);
-        } else {
-          setError("Failed to fetch device data");
-        }
-      } catch (err) {
-        setError("Error fetching data");
-      } finally {
-        setLoading(false);
+  // Function to fetch device data
+  const fetchDeviceData = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      if (!token) {
+        throw new Error("Authentication token is missing");
       }
-    };
-    fetchData();
-  }, []);
-
-  const handleOpenConfigureModal = () => {
-    console.log("Configure Device button clicked");
+      const response = await axios.get("/api/device/get-thinkspeakdata", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (response.data.success) {
+        setDevices(response.data.devices);
+        setError(null); // Clear previous errors if any
+      } else {
+        setError("Failed to fetch device data");
+      }
+    } catch (err) {
+      setError("Error fetching data");
+    } finally {
+      setLoading(false);
+    }
   };
+
+  // Initial load and 1-second polling
+  useEffect(() => {
+    fetchDeviceData(); // Initial load
+
+    const interval = setInterval(() => {
+      fetchDeviceData(); // Re-fetch every second
+    }, 1000);
+
+    return () => clearInterval(interval); // Clean up on unmount
+  }, []);
 
   if (loading) return <Spin size="large" style={{ display: "block", margin: "20px auto" }} />;
   if (error) return <Text type="danger">Error: {error}</Text>;
@@ -46,13 +52,11 @@ export default function WeatherDashboard() {
   return (
     <div className="p-6">
       <div className="flex justify-between items-center mb-4">
-        <div>
-          <h1 className="text-xl font-bold">All Weather Calculation</h1>
-        </div>
+        <h1 className="text-xl font-bold">All Weather Calculation</h1>
       </div>
 
       <Row gutter={[16, 16]} style={{ padding: "20px" }}>
-        {devices.map((device) => (
+        {[...devices].reverse().map((device) => (
           <Col xs={24} sm={12} md={8} key={device.deviceId}>
             <Card
               hoverable
@@ -66,7 +70,7 @@ export default function WeatherDashboard() {
                     <Droplet size={18} style={{ marginRight: "8px" }} /> {device.latestData.waterLevel}m
                   </Text>
                   <Text style={{ color: "white", fontWeight: "bold", fontSize: "28px" }}>
-                    <CloudRain size={18} style={{ marginRight: "8px" }} /> {device.latestData.rainingStatus === 1 ? "Raining" : "No Rain"}
+                    <CloudRain size={18} style={{ marginRight: "8px" }} /> {device.latestData.rainingStatus === "1" ? "Raining" : "No Rain"}
                   </Text>
                   <Text style={{ color: "white", fontWeight: "bold", fontSize: "28px" }}>
                     <Thermometer size={18} style={{ marginRight: "8px" }} /> {device.latestData.temperature}°C

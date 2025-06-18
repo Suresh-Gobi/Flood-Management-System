@@ -27,7 +27,6 @@ const WATER_LEVEL_THRESHOLD = 0;
 const RAIN_THRESHOLD = 1;
 const FETCH_INTERVAL = 20000;
 
-
 const calculateDistance = (lat1, lon1, lat2, lon2) => {
   const R = 6371;
   const dLat = (lat2 - lat1) * (Math.PI / 180);
@@ -65,7 +64,6 @@ const getNearbyUsers = async (deviceLocation) => {
   }
 };
 
-
 const fetchAlert = async () => {
   try {
     // Get the device data from the Device model
@@ -79,7 +77,9 @@ const fetchAlert = async () => {
     const { latitude, longitude } = location;
 
     if (!thingSpeakChannelId || !latitude || !longitude) {
-      console.warn("⚠️ Missing device data (thingSpeakChannelId, latitude, or longitude).");
+      console.warn(
+        "⚠️ Missing device data (thingSpeakChannelId, latitude, or longitude)."
+      );
       return;
     }
 
@@ -116,9 +116,11 @@ const fetchAlert = async () => {
       const alertMessage = `🚨 Alert: Water level has increased significantly! Flood alert triggered. Please take necessary precautions.`;
 
       // Send SMS alerts to nearby users
+
       // const smsPromises = nearbyUsers.map((user) =>
       //   sendSms(user.phone_number, alertMessage)
       // );
+
 
       // const emailPromises = nearbyUsers.map((user) =>
       //   sendVerificationEmail(user.email, alertMessage)
@@ -220,5 +222,4 @@ console.log(
 //   "🚀 ThingSpeak data monitoring started. Checking every 10 seconds..."
 // );
 
-
-module.exports = {fetchAlert };
+module.exports = { fetchAlert };
